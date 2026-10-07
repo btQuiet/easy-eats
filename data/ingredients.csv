@@ -1,0 +1,95 @@
+code;name_es;category;diet_kind;allergens
+arroz;Arroz;Cereal;plant;
+arroz_integral;Arroz integral;Cereal;plant;
+quinoa;Quinoa;Cereal;plant;
+cuscus;Cuscús de trigo;Cereal;plant;gluten
+pasta_trigo;Pasta de trigo;Cereal;plant;gluten
+pasta_arroz;Pasta de arroz;Cereal;plant;
+pan_trigo;Pan de trigo;Cereal;plant;gluten
+pan_integral;Pan integral de trigo;Cereal;plant;gluten
+avena;Avena convencional;Cereal;plant;gluten
+tortilla_maiz;Tortilla de maíz;Cereal;plant;
+tortilla_trigo;Tortilla de trigo;Cereal;plant;gluten
+seitan;Seitán de trigo;Proteína vegetal;plant;gluten
+harina_altramuz;Harina de altramuz;Legumbre;plant;altramuces
+garbanzo;Garbanzo;Legumbre;plant;
+lenteja;Lenteja;Legumbre;plant;
+alubia_blanca;Alubia blanca;Legumbre;plant;
+alubia_roja;Alubia roja;Legumbre;plant;
+tofu;Tofu de soja;Proteína vegetal;plant;soja
+tempeh;Tempeh de soja;Proteína vegetal;plant;soja
+edamame;Edamame;Legumbre;plant;soja
+guisantes;Guisantes;Legumbre;plant;
+patata;Patata;Tubérculo;plant;
+boniato;Boniato;Tubérculo;plant;
+calabaza;Calabaza;Verdura;plant;
+tomate;Tomate;Verdura;plant;
+tomate_cherry;Tomate cherry;Verdura;plant;
+pepino;Pepino;Verdura;plant;
+zanahoria;Zanahoria;Verdura;plant;
+cebolla;Cebolla;Verdura;plant;
+ajo;Ajo;Verdura;plant;
+espinaca;Espinaca;Verdura;plant;
+champiñon;Champiñón;Seta;plant;
+pimiento_rojo;Pimiento rojo;Verdura;plant;
+pimiento_verde;Pimiento verde;Verdura;plant;
+calabacin;Calabacín;Verdura;plant;
+berenjena;Berenjena;Verdura;plant;
+brocoli;Brócoli;Verdura;plant;
+esparrago;Espárrago;Verdura;plant;
+lechuga;Lechuga;Verdura;plant;
+rucula;Rúcula;Verdura;plant;
+aguacate;Aguacate;Fruta;plant;
+maiz;Maíz;Verdura;plant;
+coliflor;Coliflor;Verdura;plant;
+col_lombarda;Col lombarda;Verdura;plant;
+puerro;Puerro;Verdura;plant;
+apio;Apio;Verdura;plant;apio
+judias_verdes;Judías verdes;Verdura;plant;
+alcachofa;Alcachofa;Verdura;plant;
+remolacha;Remolacha;Verdura;plant;
+acelga;Acelga;Verdura;plant;
+manzana;Manzana;Fruta;plant;
+platano;Plátano;Fruta;plant;
+frutos_rojos;Frutos rojos;Fruta;plant;
+naranja;Naranja;Fruta;plant;
+pera;Pera;Fruta;plant;
+mango;Mango;Fruta;plant;
+limon;Limón;Fruta;plant;
+fresa;Fresa;Fruta;plant;
+uvas;Uvas;Fruta;plant;
+piña;Piña;Fruta;plant;
+huevo;Huevo;Huevo;egg;huevo
+leche;Leche de vaca;Lácteo;dairy;leche
+yogur;Yogur natural de leche;Lácteo;dairy;leche
+queso_fresco;Queso fresco;Lácteo;dairy;leche
+queso_feta;Queso feta;Lácteo;dairy;leche
+queso_curado;Queso curado;Lácteo;dairy;leche
+pollo;Pollo;Carne;meat;
+pavo;Pavo;Carne;meat;
+ternera;Ternera;Carne;meat;
+cerdo;Cerdo;Carne;meat;
+salmon;Salmón;Pescado;fish;pescado
+atun;Atún;Pescado;fish;pescado
+merluza;Merluza;Pescado;fish;pescado
+bacalao;Bacalao;Pescado;fish;pescado
+gamba;Gamba;Marisco;seafood;crustaceos
+mejillon;Mejillón;Marisco;seafood;moluscos
+calamar;Calamar;Marisco;seafood;moluscos
+almendra;Almendra;Fruto de cáscara;plant;frutos_cascara
+nuez;Nuez;Fruto de cáscara;plant;frutos_cascara
+cacahuete;Cacahuete;Legumbre;plant;cacahuetes
+tahini;Pasta de sésamo;Semilla;plant;sesamo
+sesamo;Semilla de sésamo;Semilla;plant;sesamo
+chia;Semilla de chía;Semilla;plant;
+semilla_calabaza;Semilla de calabaza;Semilla;plant;
+aceite_oliva;Aceite de oliva;Condimento;plant;
+perejil;Perejil;Hierba;plant;
+albahaca;Albahaca;Hierba;plant;
+canela;Canela;Especia;plant;
+cacao_puro;Cacao puro;Condimento;plant;
+leche_coco;Leche de coco;Bebida vegetal;plant;
+mostaza;Mostaza;Condimento;plant;mostaza
+salsa_soja_trigo;Salsa de soja con trigo;Condimento;plant;soja|gluten
+miso;Miso de soja;Condimento;plant;soja
+vino_blanco_sulfitos;Vino blanco con sulfitos declarados;Condimento;plant;sulfitos

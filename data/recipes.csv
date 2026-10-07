@@ -1,0 +1,126 @@
+code;name_es;category;cuisine;meal_slots;ingredients
+des001;Gachas de avena con plátano y nueces;Gachas;Casera;desayuno;avena|leche|platano|nuez|canela
+des002;Gachas de avena con manzana y canela;Gachas;Casera;desayuno;avena|leche|manzana|canela
+des003;Gachas de avena con frutos rojos y almendras;Gachas;Casera;desayuno;avena|yogur|frutos_rojos|almendra
+des004;Gachas de cacao con cacahuetes;Gachas;Casera;desayuno;avena|leche|cacao_puro|cacahuete
+des005;Gachas de avena con pera y chía;Gachas;Casera;desayuno;avena|leche_coco|pera|chia
+des006;Yogur con mango y chía;Bol;Casera;desayuno|merienda;yogur|mango|chia
+des007;Yogur con frutos rojos y nueces;Bol;Casera;desayuno|merienda;yogur|frutos_rojos|nuez
+des008;Yogur con manzana y canela;Bol;Casera;desayuno|merienda;yogur|manzana|canela
+des009;Yogur con plátano y almendras;Bol;Casera;desayuno|merienda;yogur|platano|almendra
+des010;Yogur con fresas y cacao;Bol;Casera;desayuno|merienda;yogur|fresa|cacao_puro
+des011;Tostada de aguacate y huevo;Tostada;Casera;desayuno;pan_integral|aguacate|huevo|limon
+des012;Tostada de tomate y aceite de oliva;Tostada;Mediterránea;desayuno|merienda;pan_trigo|tomate|aceite_oliva
+des013;Tostada de queso fresco y tomate;Tostada;Mediterránea;desayuno;pan_integral|queso_fresco|tomate|albahaca
+des014;Tostada de salmón y aguacate;Tostada;Casera;desayuno;pan_trigo|salmon|aguacate|limon
+des015;Tostada de garbanzos y tahini;Tostada;Mediterránea;desayuno;pan_integral|garbanzo|tahini|limon
+des016;Revuelto de huevo con espinacas;Revuelto;Casera;desayuno|cena;huevo|espinaca|cebolla|aceite_oliva
+des017;Tortilla de champiñones y perejil;Tortilla;Casera;desayuno|cena;huevo|champiñon|perejil|aceite_oliva
+des018;Tortilla de espárragos y cebolla;Tortilla;Casera;desayuno|cena;huevo|esparrago|cebolla|aceite_oliva
+des019;Bol de quinoa con manzana y canela;Bol;Casera;desayuno;quinoa|manzana|canela|almendra
+des020;Bol de quinoa con mango y coco;Bol;Casera;desayuno;quinoa|mango|leche_coco|chia
+des021;Arroz con leche y canela;Bol;Casera;desayuno|merienda;arroz|leche|canela
+des022;Arroz con coco y plátano;Bol;Casera;desayuno;arroz|leche_coco|platano|canela
+des023;Tacos de huevo y aguacate;Tacos;Casera;desayuno;tortilla_maiz|huevo|aguacate|tomate
+des024;Tacos de tofu y pimiento;Tacos;Fusión;desayuno;tortilla_maiz|tofu|pimiento_rojo|cebolla
+des025;Bol de mango y plátano con chía;Bol;Casera;desayuno|merienda;mango|platano|chia|leche_coco
+des026;Bol de frutos rojos y plátano con almendras;Bol;Casera;desayuno|merienda;frutos_rojos|platano|almendra|leche_coco
+des027;Macedonia de manzana naranja y pera;Macedonia;Casera;desayuno|merienda;manzana|naranja|pera|limon
+des028;Macedonia de piña mango y fresas;Macedonia;Casera;desayuno|merienda;piña|mango|fresa|limon
+des029;Boniato con huevo y espinacas;Bol;Casera;desayuno;boniato|huevo|espinaca|aceite_oliva
+des030;Avena reposada con plátano y cacao;Gachas;Casera;desayuno;avena|leche|platano|cacao_puro
+com001;Arroz con pollo y brócoli;Plato combinado;Casera;comida|cena;arroz|pollo|brocoli|ajo|aceite_oliva
+com002;Arroz integral con pavo y pimientos;Plato combinado;Casera;comida|cena;arroz_integral|pavo|pimiento_rojo|pimiento_verde|cebolla
+com003;Quinoa con pollo y espinacas;Bol;Casera;comida|cena;quinoa|pollo|espinaca|tomate_cherry
+com004;Pollo al limón con patatas y zanahoria;Plato combinado;Mediterránea;comida|cena;pollo|limon|patata|zanahoria|aceite_oliva
+com005;Pasta con pollo tomate y albahaca;Pasta;Mediterránea;comida|cena;pasta_trigo|pollo|tomate|albahaca|ajo
+com006;Cuscús con pollo y calabacín;Cuscús;Mediterránea;comida|cena;cuscus|pollo|calabacin|cebolla|perejil
+com007;Arroz con pavo y verduras;Plato combinado;Casera;comida|cena;arroz|pavo|zanahoria|guisantes|cebolla
+com008;Pavo con boniato y brócoli;Plato combinado;Casera;comida|cena;pavo|boniato|brocoli|aceite_oliva
+com009;Pasta con pavo y champiñones;Pasta;Casera;comida|cena;pasta_trigo|pavo|champiñon|ajo|perejil
+com010;Wrap de pavo con aguacate;Wrap;Casera;comida;tortilla_trigo|pavo|aguacate|lechuga|tomate
+com011;Arroz con ternera y pimientos;Plato combinado;Casera;comida|cena;arroz|ternera|pimiento_rojo|cebolla|ajo
+com012;Ternera con patatas y judías verdes;Plato combinado;Casera;comida|cena;ternera|patata|judias_verdes|aceite_oliva
+com013;Pasta con ternera y tomate;Pasta;Casera;comida|cena;pasta_trigo|ternera|tomate|cebolla|ajo
+com014;Quinoa con ternera y brócoli;Bol;Casera;comida|cena;quinoa|ternera|brocoli|zanahoria
+com015;Arroz con cerdo y champiñones;Plato combinado;Casera;comida|cena;arroz|cerdo|champiñon|cebolla
+com016;Cerdo con patatas y pimientos;Plato combinado;Casera;comida|cena;cerdo|patata|pimiento_verde|ajo
+com017;Pasta con cerdo y calabacín;Pasta;Casera;comida|cena;pasta_trigo|cerdo|calabacin|tomate
+com018;Cerdo con col lombarda y manzana;Plato combinado;Casera;comida|cena;cerdo|col_lombarda|manzana|arroz_integral
+com019;Salmón con quinoa y espárragos;Plato combinado;Mediterránea;comida|cena;salmon|quinoa|esparrago|limon
+com020;Salmón con arroz y brócoli;Plato combinado;Casera;comida|cena;salmon|arroz|brocoli|aceite_oliva
+com021;Salmón con patatas y espinacas;Plato combinado;Casera;comida|cena;salmon|patata|espinaca|ajo
+com022;Pasta con atún y tomate;Pasta;Mediterránea;comida|cena;pasta_trigo|atun|tomate|aceite_oliva|albahaca
+com023;Arroz con atún maíz y pepino;Ensalada;Casera;comida|cena;arroz|atun|maiz|pepino|limon
+com024;Merluza con patatas y guisantes;Plato combinado;Casera;comida|cena;merluza|patata|guisantes|perejil
+com025;Merluza con quinoa y calabacín;Plato combinado;Casera;comida|cena;merluza|quinoa|calabacin|limon
+com026;Bacalao con garbanzos y espinacas;Guiso;Mediterránea;comida|cena;bacalao|garbanzo|espinaca|cebolla|ajo
+com027;Bacalao con arroz y pimientos;Plato combinado;Casera;comida|cena;bacalao|arroz|pimiento_rojo|tomate
+com028;Arroz con gambas al ajo;Arroz;Mediterránea;comida|cena;arroz|gamba|ajo|perejil|aceite_oliva
+com029;Pasta con gambas y tomate;Pasta;Mediterránea;comida|cena;pasta_trigo|gamba|tomate|ajo|albahaca
+com030;Arroz con mejillones y vino blanco;Arroz;Mediterránea;comida|cena;arroz|mejillon|tomate|vino_blanco_sulfitos|cebolla
+com031;Arroz con calamares y pimiento;Arroz;Mediterránea;comida|cena;arroz|calamar|pimiento_rojo|ajo|perejil
+com032;Lentejas con verduras y arroz;Guiso;Casera;comida|cena;lenteja|arroz|zanahoria|cebolla|tomate
+com033;Quinoa con lentejas y tomate;Bol;Casera;comida|cena;quinoa|lenteja|tomate|pepino|perejil
+com034;Garbanzos con espinacas y zanahoria;Guiso;Casera;comida|cena;garbanzo|espinaca|zanahoria|ajo
+com035;Arroz con garbanzos y calabaza;Bol;Casera;comida|cena;arroz|garbanzo|calabaza|cebolla
+com036;Alubias blancas con alcachofa y tomate;Guiso;Mediterránea;comida|cena;alubia_blanca|alcachofa|tomate|ajo|perejil
+com037;Alubias rojas con arroz y maíz;Bol;Fusión;comida|cena;alubia_roja|arroz|maiz|pimiento_rojo|cebolla
+com038;Tofu con arroz y brócoli;Salteado;Fusión;comida|cena;tofu|arroz|brocoli|salsa_soja_trigo
+com039;Quinoa con tofu y champiñones;Bol;Fusión;comida|cena;quinoa|tofu|champiñon|espinaca
+com040;Fideos de arroz con tempeh y col lombarda;Fideos;Fusión;comida|cena;pasta_arroz|tempeh|zanahoria|col_lombarda
+com041;Cuscús con seitán y pimientos;Cuscús;Fusión;comida|cena;cuscus|seitan|pimiento_rojo|cebolla
+com042;Tortitas de altramuz con calabacín;Tortitas;Casera;comida|cena;harina_altramuz|huevo|calabacin|cebolla|aceite_oliva
+com043;Quinoa con edamame y aguacate;Bol;Fusión;comida|cena;quinoa|edamame|aguacate|pepino|limon
+com044;Arroz con berenjena y tahini;Bol;Mediterránea;comida|cena;arroz|berenjena|tahini|tomate|limon
+com045;Pasta con lentejas y tomate;Pasta;Mediterránea;comida|cena;pasta_trigo|lenteja|tomate|cebolla|albahaca
+cen001;Crema de calabaza y coco;Crema;Casera;cena;calabaza|leche_coco|cebolla|ajo
+cen002;Crema de coliflor y patata;Crema;Casera;cena;coliflor|patata|cebolla|aceite_oliva
+cen003;Crema de calabacín y puerro;Crema;Casera;cena;calabacin|puerro|patata|aceite_oliva
+cen004;Crema de zanahoria y naranja;Crema;Casera;cena;zanahoria|naranja|cebolla|aceite_oliva
+cen005;Sopa de lentejas con apio;Sopa;Casera;cena;lenteja|apio|zanahoria|cebolla
+cen006;Sopa de alubias blancas y espinacas;Sopa;Casera;cena;alubia_blanca|espinaca|cebolla|ajo
+cen007;Crema de brócoli con quinoa;Crema;Casera;cena;brocoli|quinoa|cebolla|aceite_oliva
+cen008;Frittata de espinacas y queso curado;Frittata;Casera;cena;huevo|espinaca|queso_curado|cebolla
+cen009;Tortilla de patatas y cebolla;Tortilla;Casera;cena;huevo|patata|cebolla|aceite_oliva
+cen010;Tortilla de champiñones y feta;Tortilla;Casera;cena;huevo|champiñon|queso_feta|perejil
+cen011;Huevos con espárragos y quinoa;Plato combinado;Casera;cena;huevo|esparrago|quinoa|aceite_oliva
+cen012;Ensalada de tomate pepino y feta;Ensalada;Mediterránea;cena;tomate|pepino|queso_feta|aceite_oliva|albahaca
+cen013;Ensalada de atún y aguacate;Ensalada;Casera;cena;atun|aguacate|lechuga|tomate_cherry|limon
+cen014;Ensalada de garbanzos y pepino;Ensalada;Mediterránea;cena;garbanzo|pepino|tomate|perejil|limon
+cen015;Ensalada de lentejas remolacha y nueces;Ensalada;Casera;cena;lenteja|remolacha|nuez|rucula
+cen016;Ensalada de quinoa mango y aguacate;Ensalada;Fusión;cena;quinoa|mango|aguacate|rucula|limon|semilla_calabaza
+cen017;Ensalada de pollo manzana y nueces;Ensalada;Casera;cena;pollo|manzana|nuez|lechuga|aceite_oliva
+cen018;Ensalada de pavo pera y mostaza;Ensalada;Casera;cena;pavo|pera|mostaza|rucula|aceite_oliva
+cen019;Ensalada de salmón y naranja;Ensalada;Mediterránea;cena;salmon|naranja|rucula|pepino|aceite_oliva
+cen020;Merluza al horno con coliflor;Plato combinado;Casera;cena;merluza|coliflor|ajo|perejil
+cen021;Bacalao al horno con tomate;Plato combinado;Mediterránea;cena;bacalao|tomate|ajo|cebolla
+cen022;Tofu con brócoli y miso;Salteado;Fusión;cena;tofu|brocoli|miso|ajo
+cen023;Tempeh con champiñones y arroz;Salteado;Fusión;cena;tempeh|champiñon|arroz|cebolla
+cen024;Seitán con cebolla y pimiento;Salteado;Fusión;cena;seitan|cebolla|pimiento_verde|aceite_oliva
+cen025;Fideos de arroz con tofu cacahuete y sésamo;Fideos;Fusión;cena;pasta_arroz|tofu|cacahuete|sesamo|zanahoria
+cen026;Gambas salteadas con calabacín;Salteado;Mediterránea;cena;gamba|calabacin|ajo|perejil
+cen027;Ensalada templada de calamar y patata;Ensalada;Mediterránea;cena;calamar|patata|pimiento_verde|perejil
+cen028;Sopa de mejillones y tomate al vino;Sopa;Mediterránea;cena;mejillon|tomate|vino_blanco_sulfitos|cebolla|ajo
+cen029;Pimientos rellenos de quinoa y alubias;Verduras rellenas;Casera;cena;pimiento_rojo|quinoa|alubia_roja|tomate
+cen030;Berenjena rellena de lentejas;Verduras rellenas;Mediterránea;cena;berenjena|lenteja|tomate|cebolla|ajo
+cen031;Guiso de coliflor y garbanzos al coco;Guiso;Fusión;cena;coliflor|garbanzo|leche_coco|cebolla
+cen032;Pollo con brócoli y patata;Plato combinado;Casera;cena;pollo|brocoli|patata|ajo
+cen033;Cerdo con champiñones y boniato;Plato combinado;Casera;cena;cerdo|champiñon|boniato|cebolla
+cen034;Ternera con calabacín y tomate;Salteado;Casera;cena;ternera|calabacin|tomate|ajo
+cen035;Acelgas con alubias blancas y ajo;Guiso;Casera;cena;acelga|alubia_blanca|ajo|aceite_oliva
+mer001;Yogur con uvas y chía;Bol;Casera;merienda;yogur|uvas|chia
+mer002;Yogur con manzana y nueces;Bol;Casera;merienda;yogur|manzana|nuez
+mer003;Yogur con pera y almendras;Bol;Casera;merienda;yogur|pera|almendra
+mer004;Tostada de plátano y cacahuetes;Tostada;Casera;merienda;pan_integral|platano|cacahuete
+mer005;Tostada de fresas y cacao;Tostada;Casera;merienda;pan_trigo|fresa|cacao_puro|queso_fresco
+mer006;Bocadillo pequeño de pavo y tomate;Bocadillo;Casera;merienda;pan_trigo|pavo|tomate|lechuga
+mer007;Bocadillo pequeño de queso y pepino;Bocadillo;Casera;merienda;pan_integral|queso_curado|pepino|lechuga
+mer008;Manzana con almendras y chía;Bol;Casera;merienda;manzana|almendra|chia
+mer009;Pera con nueces y yogur;Bol;Casera;merienda;pera|nuez|yogur
+mer010;Plátano con cacahuetes y cacao;Bol;Casera;merienda;platano|cacahuete|cacao_puro
+mer011;Fresas con naranja y chía;Macedonia;Casera;merienda;fresa|naranja|chia
+mer012;Brochetas de mango piña y uvas;Macedonia;Casera;merienda;mango|piña|uvas
+mer013;Garbanzos crujientes con perejil;Snack salado;Casera;merienda;garbanzo|aceite_oliva|perejil
+mer014;Bastones de zanahoria con crema de garbanzos;Snack salado;Mediterránea;merienda;zanahoria|garbanzo|tahini|limon
+mer015;Tacos pequeños de aguacate y tomate;Tacos;Casera;merienda;tortilla_maiz|aguacate|tomate|limon
