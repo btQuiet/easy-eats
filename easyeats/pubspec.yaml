@@ -1,5 +1,5 @@
 name: easyeats
-description: "A new Flutter project."
+description: "Prototipo de menús personalizados para web y Android."
 publish_to: 'none'
 version: 0.1.0+1
 
@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,1 @@
+"""Interchangeable monthly menu generators."""

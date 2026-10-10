@@ -1,5 +1,7 @@
 # Flujo funcional de la aplicación de menús personalizados
 
+> **Nota de actualización (8 de octubre de 2026):** este documento conserva el planteamiento inicial. Las decisiones vigentes están en `docs/diseno_producto.md`, `docs/estructura_y_plan.md` y `docs/modos_generacion.md`: Free solo ofrece menús; Pro añade entrega; el cliente selecciona días y comidas; el menú mensual se genera en modo de pruebas o con IA real; el operario revisa únicamente el primer menú de cada cliente; las sustituciones posteriores corresponden al usuario.
+
 ## 1. Objetivo general
 
 La aplicación tiene como objetivo gestionar la creación y entrega de menús personalizados para los clientes de un servicio de menús preparados.
