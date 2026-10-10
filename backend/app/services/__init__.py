@@ -1,1 +1,1 @@
-"""Application use cases."""
+"""Transactional business use cases."""

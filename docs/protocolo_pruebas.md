@@ -1,17 +1,19 @@
 # Protocolo de pruebas del prototipo
 
-Estado: **planificado, sin pruebas realizadas**. Este documento es un guion y una plantilla; no representa observaciones reales.
+Estado: **pruebas externas planificadas, aún no realizadas**. Este documento es un guion y una plantilla; no representa observaciones de participantes. Las comprobaciones automáticas y de navegador están en [validación de desarrollo](validacion_desarrollo.md).
 
 El enunciado exige probar con dos personas externas al equipo e introducir al menos una mejora significativa basada en lo observado. No se recogerán datos sensibles ni se presentarán respuestas de IA como si fueran pruebas con personas.
 
 ## Preparación
 
-- Dos participantes externos, identificados aquí solo como P1 y P2.
+- Dos participantes externos: P1 en Android con Free; P2 en web de escritorio con Pro. Selección y participación aún pendientes de ejecución.
 - Servidor FastAPI en LAN y app abierta en web de escritorio o Android.
 - Anotar el modo activo (`test` o `ai`) en cada sesión; no llamar IA a una propuesta del modo de pruebas.
 - Cuentas y direcciones ficticias preparadas; catálogo marcado como demostrativo.
 - Un cliente Free y uno Pro, y una cuenta de operario.
 - Una pauta de observación con tiempo, pasos, errores y frases literales breves solo si la persona autoriza anotarlas.
+- Un perfil preparado con comidas aprobadas de fecha actual/pasada para la tarea de opinión. Un alta nueva empieza en fechas futuras y no permite opinar anticipadamente; por eso esa tarea se realiza con el perfil preparado.
+- Realizar las tareas 1-5 con una cuenta nueva, la 6 con ese perfil de historial y la 7 en la cuenta Pro. Explicar el cambio de cuenta sin indicar dónde están los controles.
 
 ## Tareas sin instrucciones de interfaz
 
@@ -47,3 +49,7 @@ El enunciado exige probar con dos personas externas al equipo e introducir al me
 ## Mejora y comprobación
 
 Después de las dos pruebas, elegir un problema observado que afecte al recorrido principal. Registrar: evidencia concreta, cambio aplicado, por qué se eligió frente a otras opciones y una repetición breve de la tarea afectada. Esta sección seguirá pendiente hasta que existan observaciones reales.
+
+## Comprobación automatizada complementaria
+
+El dominio tendrá un reloj inyectable para comprobar en tests el alta, aprobación, paso de días y opinión de la misma cuenta, sin esperas reales. En la demo LAN el servidor usa el reloj real; el cliente no puede cambiarlo. Los tests con reloj controlado no sustituyen las pruebas con participantes.

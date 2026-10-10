@@ -1,6 +1,6 @@
 # Flujo funcional de la aplicación de menús personalizados
 
-> **Nota de actualización (8 de octubre de 2026):** este documento conserva el planteamiento inicial. Las decisiones vigentes están en `docs/diseno_producto.md`, `docs/estructura_y_plan.md` y `docs/modos_generacion.md`: Free solo ofrece menús; Pro añade entrega; el cliente selecciona días y comidas; el menú mensual se genera en modo de pruebas o con IA real; el operario revisa únicamente el primer menú de cada cliente; las sustituciones posteriores corresponden al usuario.
+> **Documento histórico.** Desde el 10/10/2026 prevalece [la especificación final](docs/decisiones_antes_del_desarrollo.md), con [contrato API](docs/contrato_api.md) y [modelo de datos](docs/modelo_datos.md). Se conserva este borrador como antecedente: sus revisiones de todos los ciclos, cambios por operario, entrega obligatoria los lunes y aprendizaje sobre semanas ya generadas no son reglas de la primera versión.
 
 ## 1. Objetivo general
 

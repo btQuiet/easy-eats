@@ -5,7 +5,8 @@
     "display": "standalone",
     "background_color": "#F8F6F1",
     "theme_color": "#183D33",
-    "description": "Menús personalizados para los días y comidas que eliges.",
+    "description": "Tu menú personal, a tu ritmo.",
+    "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {

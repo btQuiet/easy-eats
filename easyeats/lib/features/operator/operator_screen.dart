@@ -1,313 +1,413 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-
-import '../../app/app.dart';
-import '../catalog/catalog_screen.dart';
+import '../../core/controllers.dart';
+import '../../core/models.dart';
+import '../../core/repository.dart';
+import '../../shared/meal_detail.dart';
+import '../../shared/review_context.dart';
+import '../../shared/widgets.dart';
 
 class OperatorScreen extends StatefulWidget {
-  final AppController controller;
-  const OperatorScreen({super.key, required this.controller});
-
+  const OperatorScreen({super.key, required this.repository});
+  final AppRepository repository;
   @override
   State<OperatorScreen> createState() => _OperatorScreenState();
 }
 
-class _OperatorScreenState extends State<OperatorScreen> {
-  List<Map<String, dynamic>> pending = [];
-  Map<String, dynamic>? detail;
-  bool loading = true;
-  bool busy = false;
-  String? error;
-
+class _OperatorScreenState extends State<OperatorScreen>
+    with WidgetsBindingObserver {
+  final _queue = LoadController<ApiResult>(), _detail = LoadController<Json>();
+  String? _selected;
+  int _offset = 0;
+  bool _busy = false;
+  Timer? _timer;
+  Timer? _searchTimer;
+  final _search = TextEditingController();
+  String _query = '';
+  bool _foreground = true;
   @override
   void initState() {
     super.initState();
-    loadQueue();
-  }
-
-  Future<void> loadQueue() async {
-    setState(() {
-      loading = true;
-      error = null;
+    WidgetsBinding.instance.addObserver(this);
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    _foreground = lifecycle == null || lifecycle == AppLifecycleState.resumed;
+    _load();
+    _timer = Timer.periodic(const Duration(seconds: 2), (_) {
+      final latest = _detail.data?['latest_generation'] as Json?;
+      if (_foreground &&
+          !_busy &&
+          !_queue.loading &&
+          !_detail.loading &&
+          (_selected == null ||
+              ['queued', 'running'].contains(latest?['state']))) {
+        _load();
+      }
     });
-    try {
-      final rows = await widget.controller.api.get('/operator/pending') as List;
-      if (mounted) {
-        setState(() {
-          pending = rows.map((row) => Map<String, dynamic>.from(row)).toList();
-          detail = null;
-        });
-      }
-    } catch (exception) {
-      if (mounted) setState(() => error = exception.toString());
-    } finally {
-      if (mounted) setState(() => loading = false);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final wasForeground = _foreground;
+    _foreground = state == AppLifecycleState.resumed;
+    if (_foreground &&
+        !wasForeground &&
+        !_busy &&
+        !_queue.loading &&
+        !_detail.loading) {
+      _load();
     }
   }
 
-  Future<void> openCycle(int id) async {
-    setState(() {
-      loading = true;
-      error = null;
-    });
-    try {
-      final response = await widget.controller.api.get('/operator/cycles/$id');
-      if (mounted) setState(() => detail = Map<String, dynamic>.from(response));
-    } catch (exception) {
-      if (mounted) setState(() => error = exception.toString());
-    } finally {
-      if (mounted) setState(() => loading = false);
-    }
-  }
-
-  Future<void> action(String suffix, String success) async {
-    final cycle = Map<String, dynamic>.from(detail!['cycle']);
-    setState(() => busy = true);
-    try {
-      final result = await widget.controller.api.post(
-        '/operator/cycles/${cycle['id']}/$suffix',
-      );
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(success)));
-      }
-      if (suffix == 'approve') {
-        await loadQueue();
-      } else {
-        await openCycle(result['id'] as int);
-      }
-    } catch (exception) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(exception.toString())));
-      }
-    } finally {
-      if (mounted) setState(() => busy = false);
-    }
-  }
-
-  Future<void> replace(Map<String, dynamic> item) async {
-    try {
-      final chosen = await pickRecipe(
-        context,
-        widget.controller.api,
-        item['slot'].toString(),
-        profile: Map<String, dynamic>.from(detail!['profile']),
-      );
-      if (chosen == null) return;
-      await widget.controller.api.post(
-        '/operator/items/${item['id']}/replace',
-        {'recipe_code': chosen['code'], 'expected_version': item['version']},
-      );
-      final cycle = Map<String, dynamic>.from(detail!['cycle']);
-      await openCycle(cycle['id'] as int);
-    } catch (exception) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(exception.toString())));
-      }
-    }
-  }
-
-  Widget queueView() => RefreshIndicator(
-    onRefresh: loadQueue,
-    child: ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        Text(
-          'Revisión inicial',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        const SizedBox(height: 6),
-        const Text(
-          'Revisa solo el primer menú mensual de cada usuario. Los siguientes se publican automáticamente.',
-        ),
-        const SizedBox(height: 18),
-        if (loading)
-          const Center(child: CircularProgressIndicator())
-        else if (pending.isEmpty)
-          const Card(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Text('No hay propuestas pendientes.'),
-            ),
-          ),
-        for (final row in pending)
-          Card(
-            child: ListTile(
-              leading: const CircleAvatar(child: Icon(Icons.person_outline)),
-              title: Text(row['username'].toString()),
-              subtitle: Text(
-                '${row['month']} · ${row['plan']} · ${row['origin']}',
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => openCycle(row['id'] as int),
-            ),
-          ),
-      ],
-    ),
-  );
-
-  Widget detailView() {
-    final cycle = Map<String, dynamic>.from(detail!['cycle']);
-    final profile = Map<String, dynamic>.from(detail!['profile']);
-    final items = (detail!['items'] as List)
-        .map((row) => Map<String, dynamic>.from(row))
-        .toList();
-    final allergens = (profile['allergens'] as List? ?? []).join(', ');
-    final excluded = (profile['excluded_ingredients'] as List? ?? []).join(
-      ', ',
+  Future<void> _load() async {
+    await _queue.load(
+      () => widget.repository.api.request(
+        'GET',
+        '/operator/reviews?limit=25&offset=$_offset&q=${Uri.encodeQueryComponent(_query)}',
+      ),
     );
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: loadQueue,
-            icon: const Icon(Icons.arrow_back),
-            label: const Text('Pendientes'),
+    if (!mounted) return;
+    if (_queue.error == null &&
+        _selected != null &&
+        !(_queue.data!.data as List).any(
+          (x) => (x as Json)['id'] == _selected,
+        )) {
+      setState(() {
+        _selected = null;
+        _detail.data = null;
+      });
+    }
+    if (_selected != null) await _loadDetail();
+  }
+
+  Future<void> _loadDetail() =>
+      _detail.load(() => widget.repository.get('/operator/cycles/$_selected'));
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
+    _searchTimer?.cancel();
+    _search.dispose();
+    _queue.dispose();
+    _detail.dispose();
+    super.dispose();
+  }
+
+  Future<void> _action(Json cycle, bool regenerate) async {
+    final confirmed = await confirm(
+      context,
+      regenerate ? 'Regenerar propuesta' : 'Aprobar primer menú',
+      regenerate
+          ? 'La nueva propuesta reemplazará las correcciones actuales cuando sea válida.'
+          : 'Se publicarán las comidas futuras compatibles. Las fechas de hoy y anteriores quedarán canceladas.',
+      label: regenerate ? 'Regenerar' : 'Aprobar',
+    );
+    if (!confirmed || !mounted) return;
+    setState(() => _busy = true);
+    try {
+      await widget.repository.operation(
+        'POST',
+        '/operator/cycles/${cycle['id']}/${regenerate ? 'regenerate' : 'approve'}',
+        {'expected_version': cycle['version']},
+      );
+      if (!regenerate && mounted) setState(() => _selected = null);
+      await _load();
+    } catch (e) {
+      if (mounted) showError(context, e);
+      if (mounted &&
+          e is ApiException &&
+          [
+            'VERSION_CONFLICT',
+            'INPUT_CHANGED',
+            'ITEM_NOT_EDITABLE',
+            'CYCLE_EXPIRED',
+          ].contains(e.code)) {
+        await _load();
+      }
+    }
+    if (mounted) setState(() => _busy = false);
+  }
+
+  Widget _queueView() => LoadView(
+    controller: _queue,
+    retry: _load,
+    builder: (result, stale) {
+      final rows = (result.data as List).cast<Json>();
+      return ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text(
+            'Primeras revisiones',
+            style: Theme.of(context).textTheme.titleLarge,
           ),
-        ),
-        Text(
-          '${cycle['username']} · ${cycle['month']}',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
-        const SizedBox(height: 6),
-        Text(
-          '${items.length} comidas · ${cycle['origin'] == 'ai' ? 'Generado con IA' : 'Modo de pruebas'}',
-        ),
-        const SizedBox(height: 14),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Perfil registrado',
-                  style: Theme.of(context).textTheme.titleMedium,
+          const SizedBox(height: 8),
+          Text(
+            '${result.meta['total']} ${result.meta['total'] == 1 ? 'propuesta' : 'propuestas'}',
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _search,
+            enabled: !_busy,
+            maxLength: 80,
+            decoration: const InputDecoration(
+              labelText: 'Buscar cliente',
+              prefixIcon: Icon(Icons.search),
+              counterText: '',
+            ),
+            onChanged: (value) {
+              _searchTimer?.cancel();
+              _searchTimer = Timer(const Duration(milliseconds: 300), () {
+                if (!mounted) return;
+                _query = value.trim();
+                _offset = 0;
+                _load();
+              });
+            },
+          ),
+          const SizedBox(height: 16),
+          if (rows.isEmpty)
+            EmptyCard(
+              title: _query.isEmpty ? 'Todo al día' : 'Sin coincidencias',
+              text: _query.isEmpty
+                  ? 'Las nuevas propuestas aparecerán aquí después de generarse.'
+                  : 'Prueba con otro alias o borra la búsqueda.',
+              icon: Icons.task_alt,
+            ),
+          ...rows.map(
+            (c) => Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              color: _selected == c['id']
+                  ? Theme.of(context).colorScheme.primaryContainer
+                  : null,
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                title: Text((c['user'] as Json)['alias'] as String),
+                subtitle: Text(
+                  '${monthLabel(c['month'] as String)}\n${c['status'] == 'draft' ? 'Preparando propuesta' : 'Pendiente de revisión'}',
                 ),
-                const SizedBox(height: 8),
-                Text('Plan: ${profile['plan']} · dieta: ${profile['diet']}'),
-                Text('Alérgenos: ${allergens.isEmpty ? 'ninguno' : allergens}'),
-                Text(
-                  'Ingredientes excluidos: ${excluded.isEmpty ? 'ninguno' : excluded}',
-                ),
-              ],
+                isThreeLine: true,
+                trailing: const Icon(Icons.chevron_right),
+                onTap: stale
+                    ? null
+                    : () {
+                        setState(() {
+                          _selected = c['id'] as String;
+                          _detail.data = null;
+                        });
+                        _loadDetail();
+                      },
+              ),
             ),
           ),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 10,
-          runSpacing: 8,
-          children: [
-            FilledButton.icon(
-              onPressed: busy
-                  ? null
-                  : () => action('approve', 'Primera propuesta aprobada.'),
-              icon: const Icon(Icons.check_circle_outline),
-              label: const Text('Aprobar primer menú'),
+          if (_offset > 0)
+            OutlinedButton(
+              onPressed: () {
+                _offset -= 25;
+                _load();
+              },
+              child: const Text('Anterior'),
             ),
+          if (_offset + 25 < (result.meta['total'] as int))
+            OutlinedButton(
+              onPressed: () {
+                _offset += 25;
+                _load();
+              },
+              child: const Text('Siguiente'),
+            ),
+          TextButton.icon(
+            onPressed: _load,
+            icon: const Icon(Icons.refresh),
+            label: const Text('Actualizar'),
+          ),
+        ],
+      );
+    },
+  );
+  Widget _detailView(bool compact) {
+    if (_selected == null) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32),
+          child: EmptyCard(
+            title: 'Una buena semana empieza aquí.',
+            text:
+                'Selecciona una primera propuesta para revisar calendario, restricciones y platos.',
+            icon: Icons.verified_outlined,
+          ),
+        ),
+      );
+    }
+    return LoadView(
+      controller: _detail,
+      retry: _loadDetail,
+      builder: (cycle, stale) {
+        final p = cycle['profile'] as Json;
+        final latest = cycle['latest_generation'] as Json?;
+        final active = ['queued', 'running'].contains(latest?['state']);
+        final summary = cycle['review_summary'] as Json?;
+        final allergenCount = (p['allergen_codes'] as List).length;
+        final excludedCount = (p['excluded_ingredient_codes'] as List).length;
+        final groups = <String, List<Meal>>{};
+        for (final raw in cycle['items'] as List) {
+          final item = Meal.fromJson(raw as Json);
+          if (item.data['cancelled'] == true) continue;
+          groups.putIfAbsent(item.date, () => []).add(item);
+        }
+        return PageFrame(
+          title: (cycle['user'] as Json)['alias'] as String,
+          subtitle:
+              'Primera propuesta · ${monthLabel(cycle['month'] as String)}',
+          actions: [
+            if (compact)
+              OutlinedButton.icon(
+                onPressed: () => setState(() => _selected = null),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text('Cola'),
+              ),
             OutlinedButton.icon(
-              onPressed: busy
+              onPressed: _busy || stale || active
                   ? null
-                  : () => action('regenerate', 'Nueva propuesta generada.'),
+                  : () => _action(cycle, true),
               icon: const Icon(Icons.refresh),
-              label: const Text('Regenerar mes'),
+              label: const Text('Regenerar'),
+            ),
+            BusyButton(
+              label: 'Aprobar menú',
+              icon: Icons.check,
+              busy: _busy,
+              onPressed:
+                  stale ||
+                      active ||
+                      cycle['status'] != 'pending_review' ||
+                      cycle['requires_refresh'] == true ||
+                      (summary != null && summary['can_approve'] != true)
+                  ? null
+                  : () => _action(cycle, false),
             ),
           ],
-        ),
-        const SizedBox(height: 6),
-        const Text(
-          'Puedes sustituir platos antes de aprobar. La app comprueba el perfil registrado, pero el catálogo es demostrativo.',
-        ),
-        const SizedBox(height: 20),
-        for (final day
-            in items.map((item) => item['day'].toString()).toSet()) ...[
-          Text(day, style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 6),
-          for (final item in items.where((item) => item['day'] == day))
-            Card(
-              child: ListTile(
-                title: Text('${item['slot']} · ${item['recipe']?['name']}'),
-                subtitle: Text(
-                  (item['recipe']?['ingredients'] as List? ?? [])
-                      .map((ingredient) => ingredient['name'])
-                      .join(', '),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+          children: [
+            if (summary?['can_approve'] == true)
+              Notice(
+                '${summary!['future_item_count']} comidas futuras listas para publicar. Primera fecha: ${shortDate(summary['first_future_date'] as String)}.${summary['elapsed_item_count'] == 0 ? '' : ' ${summary['elapsed_item_count']} comidas de hoy o anteriores quedarán canceladas.'}',
+                icon: Icons.fact_check_outlined,
+              ),
+            if (summary != null &&
+                summary['can_approve'] != true &&
+                !active &&
+                cycle['requires_refresh'] != true &&
+                (summary['blocking_reasons'] as List).isNotEmpty)
+              Notice(
+                ((summary['blocking_reasons'] as List).first as Json)['message']
+                    as String,
+                error: true,
+              ),
+            if (active)
+              const Notice(
+                'Generación en curso. Conservamos la propuesta anterior hasta validar la nueva.',
+                icon: Icons.hourglass_top,
+              ),
+            if (latest?['error'] != null)
+              Notice(
+                (latest!['error'] as Json)['message'] as String,
+                error: true,
+              ),
+            if (cycle['requires_refresh'] == true)
+              const Notice(
+                'El perfil cambió desde esta generación. Regenera antes de aprobar.',
+                error: true,
+              ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                Tag(
+                  'Dieta: ${{'omnivore': 'omnívora', 'vegetarian': 'vegetariana', 'vegan': 'vegana'}[p['diet']]}',
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      tooltip: 'Ver plato',
-                      icon: const Icon(Icons.info_outline),
-                      onPressed: () => showRecipeDetails(
-                        context,
-                        Map<String, dynamic>.from(item['recipe']),
+                Tag(
+                  '$allergenCount ${allergenCount == 1 ? 'alérgeno excluido' : 'alérgenos excluidos'}',
+                ),
+                Tag(
+                  '$excludedCount ${excludedCount == 1 ? 'ingrediente excluido' : 'ingredientes excluidos'}',
+                ),
+                Tag('Origen: ${cycle['generation_origin'] ?? 'pendiente'}'),
+              ],
+            ),
+            if ((cycle['warnings'] as List).isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Notice(
+                  'Variedad ajustada en ${(cycle['warnings'] as List).length} comidas por las opciones disponibles.',
+                ),
+              ),
+            const SizedBox(height: 24),
+            ReviewContext(cycle: cycle),
+            const SizedBox(height: 24),
+            if (groups.isEmpty)
+              const EmptyCard(
+                title: 'Esperando una propuesta válida',
+                text: 'Una generación fallida no publica platos incompletos.',
+              ),
+            ...groups.entries.map(
+              (entry) => Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${weekdays[DateTime.parse(entry.key).weekday - 1]} · ${shortDate(entry.key)}',
+                        style: Theme.of(context).textTheme.titleLarge,
                       ),
-                    ),
-                    IconButton(
-                      tooltip: 'Sustituir',
-                      icon: const Icon(Icons.swap_horiz),
-                      onPressed: busy ? null : () => replace(item),
-                    ),
-                  ],
+                      const SizedBox(height: 12),
+                      ...entry.value.map(
+                        (item) => ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(
+                            item.needsAttention
+                                ? Icons.warning_amber_outlined
+                                : Icons.restaurant_outlined,
+                          ),
+                          title: Text(item.recipe.name),
+                          subtitle: Text(mealLabels[item.slot]!),
+                          trailing: const Icon(Icons.edit_outlined),
+                          onTap: stale || active || _busy
+                              ? null
+                              : () async {
+                                  await openMeal(
+                                    context,
+                                    item,
+                                    widget.repository,
+                                    operator: true,
+                                  );
+                                  if (mounted) _loadDetail();
+                                },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          const SizedBox(height: 12),
-        ],
-      ],
+          ],
+        );
+      },
     );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Easy Eats · Operario'),
-      actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Chip(
-            label: Text(
-              widget.controller.capabilities?['label']?.toString() ??
-                  'Sin conexión',
-            ),
-          ),
-        ),
-        IconButton(
-          tooltip: 'Cerrar sesión',
-          onPressed: widget.controller.logout,
-          icon: const Icon(Icons.logout),
-        ),
-      ],
-    ),
-    body: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1050),
-        child: error != null
-            ? Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(error!),
-                    TextButton(
-                      onPressed: loadQueue,
-                      child: const Text('Reintentar'),
-                    ),
-                  ],
-                ),
-              )
-            : detail == null
-            ? queueView()
-            : detailView(),
-      ),
-    ),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      if (MediaQuery.sizeOf(context).width >= 1024) {
+        return Row(
+          children: [
+            SizedBox(width: 320, child: _queueView()),
+            const VerticalDivider(width: 1),
+            Expanded(child: _detailView(false)),
+          ],
+        );
+      }
+      return _selected == null ? _queueView() : _detailView(true);
+    },
   );
 }

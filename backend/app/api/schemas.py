@@ -1,72 +1,66 @@
-from __future__ import annotations
-
-from pydantic import BaseModel, Field, field_validator, model_validator
-
-
-SLOTS = {"desayuno", "comida", "cena", "merienda"}
+"""Strict HTTP inputs used by the published OpenAPI schema."""
+from typing import Any, Literal
+from pydantic import BaseModel, ConfigDict, Field, StrictInt
 
 
-class Credentials(BaseModel):
-    username: str = Field(min_length=3, max_length=40, pattern=r"^[a-zA-Z0-9_.-]+$")
-    password: str = Field(min_length=6, max_length=128)
+class Input(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
 
 
-class WeeklySlot(BaseModel):
-    weekday: int = Field(ge=0, le=6)
-    slot: str
-
-    @field_validator("slot")
-    @classmethod
-    def valid_slot(cls, value: str) -> str:
-        if value not in SLOTS:
-            raise ValueError("Comida desconocida")
-        return value
+class Credentials(Input):
+    alias: str
+    password: str = Field(min_length=8, max_length=128)
+    transport: Literal["cookie", "bearer"] = "bearer"
 
 
-class ProfileInput(BaseModel):
-    plan: str = "free"
-    diet: str = "omnivore"
-    schedule: list[WeeklySlot] = Field(default_factory=list)
-    allergens: list[str] = Field(default_factory=list)
-    excluded_ingredients: list[str] = Field(default_factory=list)
-    liked_ingredients: list[str] = Field(default_factory=list)
-    disliked_ingredients: list[str] = Field(default_factory=list)
-    address: str = Field(default="", max_length=240)
-
-    @model_validator(mode="after")
-    def valid_profile(self) -> "ProfileInput":
-        if self.plan not in {"free", "pro"} or self.diet not in {"omnivore", "vegetarian", "vegan"}:
-            raise ValueError("Plan o dieta inválidos")
-        if not self.schedule or len({(x.weekday, x.slot) for x in self.schedule}) != len(self.schedule):
-            raise ValueError("Selecciona al menos una comida semanal, sin duplicados")
-        for values in (self.allergens, self.excluded_ingredients,
-                       self.liked_ingredients, self.disliked_ingredients):
-            if len(values) != len(set(values)):
-                raise ValueError("No repitas alérgenos o ingredientes")
-        if set(self.liked_ingredients) & set(self.disliked_ingredients):
-            raise ValueError("Un ingrediente no puede gustar y disgustar a la vez")
-        if self.plan == "pro" and not self.address.strip():
-            raise ValueError("El plan Pro requiere una dirección de prueba")
-        return self
+class Versioned(Input):
+    expected_version: StrictInt = Field(ge=0)
 
 
-class GenerateInput(BaseModel):
-    month: str = Field(pattern=r"^\d{4}-(0[1-9]|1[0-2])$")
+class Draft(Versioned):
+    step: Literal["plan", "calendar", "restrictions", "preferences", "summary"]
+    fields: dict[str, Any]
 
 
-class ReplaceInput(BaseModel):
+class ProfilePatch(Versioned):
+    diet: Literal["omnivore", "vegetarian", "vegan"] | None = None
+    allergen_codes: list[str] | None = None
+    excluded_ingredient_codes: list[str] | None = None
+    liked_ingredient_codes: list[str] | None = None
+    disliked_ingredient_codes: list[str] | None = None
+    preferred_categories: list[str] | None = None
+    repetition_tolerance: Literal["low", "normal", "high"] | None = None
+
+
+class CalendarUpdate(Versioned):
+    weekly_slots: list[dict[str, Any]]
+
+
+class AddressFields(Input):
+    line1: str = Field(min_length=1, max_length=150)
+    city: str = Field(min_length=1, max_length=80)
+    postal_code: str = Field(min_length=1, max_length=12)
+    notes: str = Field(default="", max_length=250)
+
+
+class AddressUpdate(AddressFields, Versioned):
+    pass
+
+
+class PlanUpdate(Versioned):
+    plan: Literal["free", "pro"]
+    address: AddressFields | None = None
+    expected_address_version: StrictInt | None = Field(default=None, ge=0)
+
+
+class Ensure(Input):
+    month: str = Field(pattern=r"^\d{4}-\d{2}$")
+
+
+class Replacement(Versioned):
     recipe_code: str
-    expected_version: int = Field(ge=1)
 
 
-class FeedbackInput(BaseModel):
-    item_id: int
-    rating: int
+class Opinion(Versioned):
+    rating: StrictInt
     comment: str = Field(default="", max_length=500)
-
-    @field_validator("rating")
-    @classmethod
-    def valid_rating(cls, value: int) -> int:
-        if value not in {-1, 1}:
-            raise ValueError("La valoración debe ser -1 o 1")
-        return value

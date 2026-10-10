@@ -1,1 +1,1 @@
-"""Easy Eats API."""
+"""Easy Eats LAN service."""

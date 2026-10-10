@@ -1,35 +1,40 @@
-from __future__ import annotations
-
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from pathlib import Path
+from zoneinfo import ZoneInfo
+
+ROOT = Path(__file__).resolve().parents[2]
 
 
-BACKEND_DIR = Path(__file__).resolve().parents[1]
-ROOT_DIR = BACKEND_DIR.parent
-
-
-@dataclass(frozen=True)
+@dataclass
 class Settings:
-    mode: str
-    database_path: Path
-    catalog_path: Path
-    ai_provider: str
-    ai_model: str
-    ai_api_key: str
-    operator_password: str
+    mode: str = field(default_factory=lambda: os.getenv("GENERATION_MODE", "test"))
+    catalog_path: Path = ROOT / "data/catalog.sqlite"
+    db_path: Path | None = None
+    groq_key: str = field(default_factory=lambda: os.getenv("GROQ_API_KEY", ""))
+    groq_model: str = field(default_factory=lambda: os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"))
+    origins: tuple = field(default_factory=lambda: tuple(
+        x.strip() for x in os.getenv("CORS_ORIGINS", "http://localhost:8080,http://127.0.0.1:8080").split(",") if x.strip()))
+    cookie_secure: bool = field(default_factory=lambda: os.getenv("COOKIE_SECURE", "false").lower() == "true")
+
+    def __post_init__(self):
+        if self.mode not in ("test", "ai"):
+            raise ValueError("GENERATION_MODE must be test or ai")
+        if self.db_path is None:
+            self.db_path = ROOT / f"backend/var/app_{self.mode}.sqlite"
+        self.db_path = Path(self.db_path)
 
 
-def get_settings() -> Settings:
-    mode = os.getenv("EASY_EATS_GENERATION_MODE", "test").strip().lower()
-    if mode not in {"test", "ai"}:
-        raise ValueError("EASY_EATS_GENERATION_MODE debe ser test o ai")
-    return Settings(
-        mode=mode,
-        database_path=BACKEND_DIR / "var" / f"app_{mode}.sqlite",
-        catalog_path=ROOT_DIR / "data" / "catalog.sqlite",
-        ai_provider=os.getenv("EASY_EATS_AI_PROVIDER", "groq").strip().lower(),
-        ai_model=os.getenv("EASY_EATS_AI_MODEL", "openai/gpt-oss-120b").strip(),
-        ai_api_key=os.getenv("EASY_EATS_AI_API_KEY", "").strip(),
-        operator_password=os.getenv("EASY_EATS_OPERATOR_PASSWORD", "demo1234"),
-    )
+class Clock:
+    def now(self):
+        return datetime.now(timezone.utc)
+
+    def local(self):
+        return self.now().astimezone(ZoneInfo("Europe/Madrid"))
+
+    def today(self):
+        return self.local().date()
+
+    def stamp(self):
+        return self.now().isoformat()

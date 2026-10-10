@@ -1,366 +1,247 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-
-import '../../app/app.dart';
-import '../../core/api.dart';
-
-typedef Recipe = Map<String, dynamic>;
-
-String recipeWarnings(Recipe recipe, Map<String, dynamic>? profile) {
-  if (profile == null) return '';
-  final warnings = <String>[];
-  final restrictedAllergens = Set<String>.from(profile['allergens'] ?? []);
-  final excluded = Set<String>.from(profile['excluded_ingredients'] ?? []);
-  final recipeAllergens = <String>{
-    for (final item in recipe['allergens'] ?? []) item['code'].toString(),
-  };
-  final recipeIngredients = <String>{
-    for (final item in recipe['ingredients'] ?? []) item['code'].toString(),
-  };
-  if (restrictedAllergens.intersection(recipeAllergens).isNotEmpty) {
-    warnings.add('contiene un alérgeno registrado');
-  }
-  if (excluded.intersection(recipeIngredients).isNotEmpty) {
-    warnings.add('contiene un ingrediente excluido');
-  }
-  if (profile['diet'] == 'vegan' && recipe['is_vegan'] != true) {
-    warnings.add('no es vegano según el catálogo');
-  }
-  if (profile['diet'] == 'vegetarian' && recipe['is_vegetarian'] != true) {
-    warnings.add('no es vegetariano según el catálogo');
-  }
-  return warnings.join(' · ');
-}
-
-Future<void> showRecipeDetails(
-  BuildContext context,
-  Recipe recipe,
-) => showDialog<void>(
-  context: context,
-  builder: (context) => AlertDialog(
-    title: Text(recipe['name'].toString()),
-    content: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 470),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${recipe['category']} · ${recipe['cuisine']}'),
-            const SizedBox(height: 14),
-            const Text(
-              'Ingredientes',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              (recipe['ingredients'] as List)
-                  .map((item) => item['name'])
-                  .join(', '),
-            ),
-            const SizedBox(height: 14),
-            const Text(
-              'Alérgenos modelados',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              (recipe['allergens'] as List).isEmpty
-                  ? 'No se han registrado en este concepto de plato.'
-                  : (recipe['allergens'] as List)
-                        .map((item) => item['name'])
-                        .join(', '),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Ficha demostrativa: ingredientes, trazas y elaboración reales no verificados.',
-            ),
-          ],
-        ),
-      ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cerrar'),
-      ),
-    ],
-  ),
-);
-
-Future<Recipe?> pickRecipe(
-  BuildContext context,
-  ApiClient api,
-  String slot, {
-  Map<String, dynamic>? profile,
-}) async {
-  final list = List<Recipe>.from(
-    (await api.get(
-      '/catalog/recipes',
-      query: {'slot': slot},
-    )).map((item) => Recipe.from(item)),
-  );
-  if (!context.mounted) return null;
-  String query = '';
-  return showDialog<Recipe>(
-    context: context,
-    builder: (dialogContext) => StatefulBuilder(
-      builder: (dialogContext, update) {
-        final filtered = list
-            .where(
-              (recipe) => recipe['name'].toString().toLowerCase().contains(
-                query.toLowerCase(),
-              ),
-            )
-            .toList();
-        return Dialog(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700, maxHeight: 650),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Elige otro plato · $slot',
-                    style: Theme.of(dialogContext).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'Tú decides la sustitución. Revisa sus ingredientes antes de confirmar.',
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    autofocus: true,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: 'Buscar plato',
-                    ),
-                    onChanged: (value) => update(() => query = value),
-                  ),
-                  const SizedBox(height: 12),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: filtered.length,
-                      itemBuilder: (context, index) {
-                        final recipe = filtered[index];
-                        final warning = recipeWarnings(recipe, profile);
-                        return Card(
-                          child: ListTile(
-                            title: Text(recipe['name'].toString()),
-                            subtitle: Text(
-                              warning.isEmpty
-                                  ? '${recipe['category']} · ${(recipe['allergens'] as List).length} alérgenos modelados'
-                                  : warning,
-                              maxLines: 2,
-                            ),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () async {
-                              final confirmed = await showDialog<bool>(
-                                context: dialogContext,
-                                builder: (context) => AlertDialog(
-                                  title: Text(recipe['name'].toString()),
-                                  content: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          'Ingredientes: ${(recipe['ingredients'] as List).map((i) => i['name']).join(', ')}',
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Text(
-                                          'Alérgenos modelados: ${(recipe['allergens'] as List).isEmpty ? 'ninguno registrado' : (recipe['allergens'] as List).map((i) => i['name']).join(', ')}',
-                                        ),
-                                        if (warning.isNotEmpty) ...[
-                                          const SizedBox(height: 12),
-                                          Text(
-                                            'Atención: $warning',
-                                            style: TextStyle(
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.error,
-                                            ),
-                                          ),
-                                        ],
-                                        const SizedBox(height: 12),
-                                        const Text(
-                                          'Datos no verificados. Confirma solo tras revisar si el plato te conviene.',
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, false),
-                                      child: const Text('Cancelar'),
-                                    ),
-                                    FilledButton(
-                                      onPressed: () =>
-                                          Navigator.pop(context, true),
-                                      child: const Text('Elegir plato'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                              if (confirmed == true && dialogContext.mounted) {
-                                Navigator.pop(dialogContext, recipe);
-                              }
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () => Navigator.pop(dialogContext),
-                      child: const Text('Cerrar'),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    ),
-  );
-}
+import '../../core/controllers.dart';
+import '../../core/models.dart';
+import '../../core/repository.dart';
+import '../../shared/widgets.dart';
 
 class CatalogScreen extends StatefulWidget {
-  final AppController controller;
-  const CatalogScreen({super.key, required this.controller});
-
+  const CatalogScreen({super.key, required this.repository});
+  final AppRepository repository;
   @override
   State<CatalogScreen> createState() => _CatalogScreenState();
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  List<Recipe> recipes = [];
-  bool loading = true;
-  String? error;
-  String search = '';
-  String slot = 'Todos';
-
+  final _controller = LoadController<ApiResult>();
+  Timer? _debounce;
+  String _query = '', _meal = '', _diet = '';
+  bool _compatible = false;
+  int _offset = 0;
   @override
   void initState() {
     super.initState();
-    load();
+    _load();
   }
 
-  Future<void> load() async {
-    try {
-      final response = await widget.controller.api.get('/catalog/recipes');
-      if (mounted) {
-        setState(() {
-          recipes = List<Recipe>.from(
-            response.map((item) => Recipe.from(item)),
-          );
-          loading = false;
-          error = null;
-        });
-      }
-    } catch (exception) {
-      if (mounted) {
-        setState(() {
-          error = exception.toString();
-          loading = false;
-        });
-      }
-    }
+  Future<void> _load() => _controller.load(
+    () => widget.repository.api.request(
+      'GET',
+      '/catalog/recipes?limit=24&offset=$_offset&q=${Uri.encodeQueryComponent(_query)}&meal_slot=$_meal&diet=$_diet&compatible_only=$_compatible',
+    ),
+  );
+  void _filter() {
+    _offset = 0;
+    _load();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final filtered = recipes
-        .where(
-          (recipe) =>
-              (slot == 'Todos' || (recipe['slots'] as List).contains(slot)) &&
-              recipe['name'].toString().toLowerCase().contains(
-                search.toLowerCase(),
-              ),
-        )
-        .toList();
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1100),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => LoadView(
+    controller: _controller,
+    retry: _load,
+    builder: (result, stale) {
+      final recipes = (result.data as List)
+          .map((x) => Recipe.fromJson(x as Json))
+          .toList();
+      final total = result.meta['total'] as int;
+      return PageFrame(
+        title: 'Ideas para tu mesa.',
+        subtitle: 'Explora el catálogo · $total platos con estos filtros',
+        children: [
+          TextField(
+            decoration: const InputDecoration(
+              labelText: 'Buscar plato o ingrediente',
+              prefixIcon: Icon(Icons.search),
+            ),
+            onChanged: (value) {
+              _query = value;
+              _debounce?.cancel();
+              _debounce = Timer(const Duration(milliseconds: 300), _filter);
+            },
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
             children: [
-              Text(
-                'Explora los platos',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                '125 ideas de plato. Sus ingredientes y alérgenos son datos de demostración.',
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: const InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  hintText: 'Buscar por nombre',
-                ),
-                onChanged: (value) => setState(() => search = value),
-              ),
-              const SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final choice in const [
-                      'Todos',
-                      'desayuno',
-                      'comida',
-                      'cena',
-                      'merienda',
-                    ])
-                      Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ChoiceChip(
-                          label: Text(choice),
-                          selected: slot == choice,
-                          onSelected: (_) => setState(() => slot = choice),
-                        ),
-                      ),
+              SizedBox(
+                width: 230,
+                child: DropdownButtonFormField<String>(
+                  initialValue: _meal,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: 'Momento'),
+                  items: [
+                    const DropdownMenuItem(value: '', child: Text('Todos')),
+                    ...mealLabels.entries.map(
+                      (e) =>
+                          DropdownMenuItem(value: e.key, child: Text(e.value)),
+                    ),
                   ],
+                  onChanged: (v) {
+                    _meal = v!;
+                    _filter();
+                  },
                 ),
               ),
-              const SizedBox(height: 12),
-              if (loading)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (error != null)
-                Expanded(child: Center(child: Text(error!)))
-              else
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filtered.length,
-                    itemBuilder: (context, index) {
-                      final recipe = filtered[index];
-                      return Card(
-                        child: ListTile(
-                          title: Text(recipe['name'].toString()),
-                          subtitle: Text(
-                            '${recipe['category']} · ${recipe['cuisine']}',
-                          ),
-                          trailing: const Icon(Icons.open_in_new),
-                          onTap: () => showRecipeDetails(context, recipe),
-                        ),
-                      );
-                    },
-                  ),
+              SizedBox(
+                width: 230,
+                child: DropdownButtonFormField<String>(
+                  initialValue: _diet,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: 'Dieta'),
+                  items: const [
+                    DropdownMenuItem(value: '', child: Text('Todas')),
+                    DropdownMenuItem(
+                      value: 'vegetarian',
+                      child: Text('Vegetariana'),
+                    ),
+                    DropdownMenuItem(value: 'vegan', child: Text('Vegana')),
+                  ],
+                  onChanged: (v) {
+                    _diet = v!;
+                    _filter();
+                  },
                 ),
+              ),
+              FilterChip(
+                label: const Text('Solo compatibles'),
+                selected: _compatible,
+                onSelected: (v) {
+                  _compatible = v;
+                  _filter();
+                },
+              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
+          const SizedBox(height: 24),
+          if (recipes.isEmpty)
+            const EmptyCard(
+              title: 'No encontramos platos',
+              text: 'Prueba otra búsqueda o cambia los filtros.',
+            ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = constraints.maxWidth >= 880
+                  ? 3
+                  : constraints.maxWidth >= 560
+                  ? 2
+                  : 1;
+              final width =
+                  (constraints.maxWidth - (columns - 1) * 16) / columns;
+              return Wrap(
+                spacing: 16,
+                runSpacing: 16,
+                children: recipes
+                    .map(
+                      (r) => SizedBox(
+                        width: width,
+                        child: Card(
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(20),
+                            onTap: () => showDetail(
+                              context,
+                              DetailLayout(
+                                title: r.name,
+                                children: recipeFields(context, r),
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 52,
+                                    height: 52,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: const Icon(
+                                      Icons.restaurant_outlined,
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  Text(
+                                    r.name,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleLarge,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    r.ingredients
+                                        .map((i) => (i as Json)['name'])
+                                        .take(4)
+                                        .join(' · '),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Wrap(
+                                    spacing: 8,
+                                    children: [
+                                      Tag(r.category),
+                                      if (r.compatible != null)
+                                        Tag(
+                                          r.compatible!
+                                              ? 'Compatible'
+                                              : 'Revisar',
+                                          icon: r.compatible!
+                                              ? Icons.check_circle_outline
+                                              : Icons.warning_amber_outlined,
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 16,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              OutlinedButton(
+                onPressed: _offset == 0 || _controller.loading
+                    ? null
+                    : () {
+                        _offset -= 24;
+                        _load();
+                      },
+                child: const Text('Anterior'),
+              ),
+              Text('Página ${_offset ~/ 24 + 1}'),
+              OutlinedButton(
+                onPressed: _offset + 24 >= total || _controller.loading
+                    ? null
+                    : () {
+                        _offset += 24;
+                        _load();
+                      },
+                child: const Text('Siguiente'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          const Notice('Datos de demostración sin verificación alimentaria.'),
+        ],
+      );
+    },
+  );
 }

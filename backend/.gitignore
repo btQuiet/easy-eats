@@ -1,7 +1,6 @@
 .venv/
-.env
 __pycache__/
 .pytest_cache/
-var/*.sqlite
-var/*.sqlite-shm
-var/*.sqlite-wal
+.env
+var/*.sqlite*
+var/*.lock

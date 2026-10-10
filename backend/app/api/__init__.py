@@ -1,1 +1,1 @@
-"""HTTP endpoints and request models."""
+"""Versioned HTTP contract."""

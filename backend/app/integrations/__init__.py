@@ -1,1 +1,1 @@
-"""Interchangeable monthly menu generators."""
+"""Local and external generation adapters."""

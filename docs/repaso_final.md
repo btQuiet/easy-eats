@@ -1,8 +1,8 @@
 # Repaso final antes del desarrollo
 
-> Documento histórico redactado antes del visto bueno. El estado actual de la implementación y los comandos de arranque están en [README.md](../README.md).
+> **Histórico del 8 de octubre de 2026.** Conserva el planteamiento anterior y sus pendientes de entonces. No describe el estado actual ni exige un nuevo visto bueno. Desde el 10/10/2026 rigen [especificación final](decisiones_antes_del_desarrollo.md), [contrato API](contrato_api.md) y [modelo de datos](modelo_datos.md). El inventario real está en [README.md](../README.md).
 
-Fecha: 8 de octubre de 2026. Estado: **listo para empezar cuando el usuario dé el visto bueno**. Este documento consolida la conversación, el catálogo, el flujo inicial, las fotografías de trabajo y el enunciado de la práctica. No registra pruebas con personas ni afirma que la integración de IA ya funcione.
+Fecha histórica: 8 de octubre de 2026. Este documento conserva la conversación, el catálogo, el flujo inicial, las fotografías de trabajo y el enunciado de la práctica tal como se describían entonces. Sus supuestos, inventario y pendientes fueron sustituidos por la especificación del 10/10/2026. No registra pruebas con personas ni afirma que la integración de IA ya funcione.
 
 ## 1. Decisiones confirmadas
 
