@@ -8,10 +8,10 @@ Resultados ejecutados sobre la implementación actual. No representan pruebas co
 | --- | --- |
 | Backend, pytest | 45 pruebas pasan. |
 | Flutter, analyze | Sin incidencias. |
-| Flutter, test | 29 pruebas pasan. |
+| Flutter, test | 35 pruebas pasan. |
 | Web release | Compilación correcta, recursos web locales. |
 | Android debug APK | Compilación correcta. |
-| Windows debug | Compilación correcta. |
+| Windows release | Compilación correcta con la corrección de calendario. |
 
 Backend: registro/sesión/cookie/CSRF, roles, límite de acceso, asistente, revisión privada, aprobación y fechas vencidas, renovación entre meses, sustitución auditada/idempotente, dos sustituciones concurrentes, propiedad, restricciones, opinión editable, calendario diferido, generación invalidada por cambio de inputs, recuperación de reinicio, fallo que conserva propuesta, Free/Pro, dirección atómica, captura de entrega y cancelación de cambio pendiente. Las restricciones retiradas del catálogo se conservan hasta una corrección explícita y bloquean las comidas mientras requieren atención.
 
@@ -26,6 +26,8 @@ La auditoría amplió la cobertura con regresiones de entregas pendientes Pro y 
 El entorno Python emite un aviso de deprecación de Starlette sobre su transporte httpx de pruebas. No hay fallos de ejecución; la integración real de Groq usa httpx directamente.
 
 La fase de [mejoras de producto](mejoras_20261010.md) añade siete casos de backend y tres de widgets: resumen de revisión coherente con la publicación, rechazo por perfil/plato/generación, retirada de propuestas vencidas, búsqueda literal por alias con paginación y control de rol, resumen semanal sin filtración de propuesta privada, perfil adaptable con favoritos reales, comida destacada incompatible y botón de aprobación bloqueado por el servidor. El test de ciclo de vida usa las transiciones reales inactive → hidden → paused y hidden → inactive → resumed, incluyendo ahora el buscador del operario.
+
+La [corrección de calendario](correccion_calendario_20261010.md) añade seis regresiones: navegación por los cambios de hora de marzo y octubre, opiniones con dos lunes válidos, selector y propuesta de inicio posteriores a hoy, y fechas civiles en cambios de mes/año y año bisiesto. En Windows con zona Romance Standard Time se reprodujo antes del cambio el envío de `2026-10-25` al avanzar desde `2026-10-19`; tras la corrección se envía `2026-10-26`. Las 35 pruebas de Flutter se ejecutaron después del cambio y el análisis no muestra incidencias.
 
 ## Recorrido real en navegador
 

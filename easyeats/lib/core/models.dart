@@ -125,6 +125,16 @@ int weeklyMealCount(Json profile) =>
     );
 const steps = ['plan', 'calendar', 'restrictions', 'preferences', 'summary'];
 String dateKey(DateTime date) => date.toIso8601String().substring(0, 10);
+
+// API dates are civil calendar dates, not instants. UTC stores their components
+// without local daylight-saving shifts; do not convert them with toUtc().
+DateTime calendarDate(DateTime date) =>
+    DateTime.utc(date.year, date.month, date.day);
+DateTime addCalendarDays(DateTime date, int days) =>
+    DateTime.utc(date.year, date.month, date.day + days);
+DateTime mondayOf(DateTime date) =>
+    addCalendarDays(date, DateTime.monday - date.weekday);
+
 String foldSearch(String value) {
   const accents = {
     'á': 'a',

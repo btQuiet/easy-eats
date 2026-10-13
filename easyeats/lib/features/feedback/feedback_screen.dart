@@ -28,11 +28,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
       '/feedback?limit=25&offset=$_offset',
     );
     final today = DateTime.parse(widget.repository.api.serverToday!);
-    final monday = today.subtract(Duration(days: today.weekday - 1));
+    final monday = mondayOf(today);
     final weeks = [
       await widget.repository.get('/menus/week?start=${dateKey(monday)}'),
       await widget.repository.get(
-        '/menus/week?start=${dateKey(monday.subtract(const Duration(days: 7)))}',
+        '/menus/week?start=${dateKey(addCalendarDays(monday, -7))}',
       ),
     ];
     final meals = <Meal>[];

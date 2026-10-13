@@ -1,6 +1,6 @@
 # Auditoría de Easy Eats · 10/10/2026
 
-Se revisaron el código presente, las reglas de negocio, los fallos de red y concurrencia, los formularios y la presentación adaptable. Se corrigieron los fallos encontrados y se añadieron regresiones. Tras la fase de [mejoras de producto](mejoras_20261010.md), **45 pruebas de backend y 29 de Flutter pasan; Flutter analyze no muestra incidencias; web, Android y Windows compilan**.
+Se revisaron el código presente, las reglas de negocio, los fallos de red y concurrencia, los formularios y la presentación adaptable. Se corrigieron los fallos encontrados y se añadieron regresiones. Tras las [mejoras de producto](mejoras_20261010.md) y la [corrección de calendario](correccion_calendario_20261010.md), **45 pruebas de backend y 35 de Flutter pasan; Flutter analyze no muestra incidencias**. Los artefactos y validaciones por fase se detallan abajo y en los documentos enlazados.
 
 No se recuperó código descartado en Git. Los recorridos de esta auditoría usaron una base SQLite independiente y cuentas ficticias; no se alteraron las cuentas de la base habitual para preparar pruebas. El catálogo original se conservó.
 
@@ -25,12 +25,13 @@ P1 identifica un fallo de funcionamiento que bloquea un flujo o compromete la co
 | P2 | Una semana próxima al límite del tipo fecha podía provocar un 500 al sumar sus siete días. | Validación controlada de fecha/semana y respuesta 422. Pruebas parametrizadas de fecha inválida, lunes incorrecto y límite de año. |
 | P2 | Groq con `choices` vacío u otras respuestas malformadas no siempre llegaba a la reparación controlada. El timeout de transporte no imponía por sí solo un plazo total de llamada. | Validación del objeto `items`, tratamiento de respuesta malformada y límite total de 45 segundos por llamada. Transporte simulado verifica reparación limitada, rechazo y recuperación de un fallo transitorio; no se cambia a generación local. |
 | Menor | El panel mostraba «1 propuestas». | Concordancia singular/plural corregida y artefactos recompilados. |
+| P1 | Avanzar desde el lunes 19/10/2026 enviaba domingo 25/10 al cruzar el cambio de hora. Opiniones en marzo y fechas de inicio en octubre compartían la misma aritmética de periodos de 24 horas. | Operaciones de fechas civiles independientes del horario local. La regresión reproduce el domingo antes del cambio y verifica lunes 26/10 después; también comprueba navegación en marzo, opiniones, selector y propuesta de inicio. |
 
 ## Revisión del código
 
 Se revisaron sesión/roles/cookies/CSRF, propiedad de recursos, versiones e idempotencia, migraciones y transacciones, generación y publicación, calendario, restricciones, planes/entregas y el adaptador externo. En Flutter se revisaron routing por rol, cliente HTTP, repositorios, controladores, ciclo de vida, carga/errores, formularios, detalles y pantallas por funcionalidad.
 
-Las pruebas existentes verifican, entre otros casos, acceso a datos ajenos, cliente intentando actuar como operario, dos sustituciones concurrentes, cambio de inputs durante generación, reinicio del worker, fallo que conserva la propuesta, cancelación de fechas vencidas, publicación entre meses y snapshots de entregas. La auditoría añadió **29 casos ejecutados** sobre los 35 existentes y las mejoras de producto añadieron otros diez; las parametrizaciones se incluyen en ese recuento.
+Las pruebas existentes verifican, entre otros casos, acceso a datos ajenos, cliente intentando actuar como operario, dos sustituciones concurrentes, cambio de inputs durante generación, reinicio del worker, fallo que conserva la propuesta, cancelación de fechas vencidas, publicación entre meses y snapshots de entregas. La auditoría añadió **29 casos ejecutados** sobre los 35 existentes, las mejoras de producto otros diez y la corrección de calendario otros seis; las parametrizaciones se incluyen en ese recuento.
 
 Código principal de las correcciones:
 
@@ -44,11 +45,11 @@ Código principal de las correcciones:
 | Comprobación | Resultado |
 | --- | --- |
 | Backend, pytest | 45 pasan. Un aviso de deprecación de Starlette/httpx en el transporte de pruebas. |
-| Flutter test | 29 pasan. |
+| Flutter test | 35 pasan. |
 | Flutter analyze | Sin incidencias. |
 | Web release con recursos locales | Compilación correcta. |
 | Android debug APK | Compilación correcta. |
-| Windows debug | Compilación correcta. |
+| Windows release, corrección de calendario | Compilación correcta. |
 | Consola del recorrido auditado en navegador | Sin mensajes de error ni warning capturados. |
 
 Las dos regresiones de subida pendiente/recuperación de Pro y la de desbordamiento se ejecutaron primero contra el comportamiento defectuoso. Sus fallos quedaron resueltos por los cambios de código, no por relajar las expectativas.

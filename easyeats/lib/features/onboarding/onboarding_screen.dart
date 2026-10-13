@@ -47,7 +47,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             0) {
       _explicitStart = false;
       for (var offset = 1; offset <= 7; offset++) {
-        final d = today.add(Duration(days: offset));
+        final d = addCalendarDays(today, offset);
         final slots = (_fields!['weekly_slots'] as List)[d.weekday - 1] as Json;
         if ((slots['meal_slots'] as List).isNotEmpty) {
           _fields!['service_start_date'] = dateKey(d);
@@ -104,7 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             widget.session.repository.api.serverToday!,
           );
           for (var offset = 1; offset <= 7; offset++) {
-            final date = today.add(Duration(days: offset));
+            final date = addCalendarDays(today, offset);
             final day = (_fields!['weekly_slots'] as List)
                 .cast<Json>()
                 .firstWhere((x) => x['weekday'] == date.weekday);

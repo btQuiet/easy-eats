@@ -8,7 +8,7 @@ import '../../shared/meal_detail.dart';
 import '../../shared/widgets.dart';
 
 class WeekController extends LoadController<Json> {
-  WeekController(this.repository, this.start);
+  WeekController(this.repository, DateTime start) : start = mondayOf(start);
   final AppRepository repository;
   DateTime start;
   final Set<String> attempts = {};
@@ -20,18 +20,22 @@ class WeekController extends LoadController<Json> {
       generationError = null;
       try {
         final p = await repository.get('/profile');
-        final today = DateTime.parse(repository.api.serverToday!);
+        final today = calendarDate(DateTime.parse(repository.api.serverToday!));
         final current = dateKey(today).substring(0, 7);
         final next = dateKey(
-          DateTime(today.year, today.month + 1),
+          DateTime.utc(today.year, today.month + 1),
         ).substring(0, 7);
         final first = (p['service_start_date'] as String).substring(0, 7);
         final months = {
           dateKey(start).substring(0, 7),
-          dateKey(start.add(const Duration(days: 6))).substring(0, 7),
+          dateKey(addCalendarDays(start, 6)).substring(0, 7),
         };
         if (p['initial_review_completed'] != true) months.add(first);
-        if (DateTime(today.year, today.month + 1, 0).difference(today).inDays <
+        if (DateTime.utc(
+              today.year,
+              today.month + 1,
+              0,
+            ).difference(today).inDays <
             7) {
           months.add(next);
         }
@@ -110,10 +114,7 @@ class _WeekScreenState extends State<WeekScreen> with WidgetsBindingObserver {
     final lifecycle = WidgetsBinding.instance.lifecycleState;
     _foreground = lifecycle == null || lifecycle == AppLifecycleState.resumed;
     final today = DateTime.parse(widget.repository.api.serverToday!);
-    _controller = WeekController(
-      widget.repository,
-      today.subtract(Duration(days: today.weekday - 1)),
-    );
+    _controller = WeekController(widget.repository, today);
     _controller.refresh(ensure: true);
     _timer = Timer.periodic(const Duration(seconds: 2), (_) {
       if (_foreground &&
@@ -143,7 +144,7 @@ class _WeekScreenState extends State<WeekScreen> with WidgetsBindingObserver {
   }
 
   void _move(int days) {
-    _controller.start = _controller.start.add(Duration(days: days));
+    _controller.start = addCalendarDays(_controller.start, days);
     _controller.refresh(ensure: true);
   }
 
@@ -192,9 +193,7 @@ class _WeekScreenState extends State<WeekScreen> with WidgetsBindingObserver {
                     final today = DateTime.parse(
                       widget.repository.api.serverToday!,
                     );
-                    _controller.start = today.subtract(
-                      Duration(days: today.weekday - 1),
-                    );
+                    _controller.start = mondayOf(today);
                     _controller.refresh(ensure: true);
                   },
             child: const Text('Esta semana'),

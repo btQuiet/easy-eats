@@ -8,7 +8,7 @@ Registro y sesión de cliente/operario; configuración en cinco pasos con borrad
 
 Tema Material 3 claro/oscuro y navegación adaptable: móvil, rail y sidebar. El modo `test` funciona sin red externa. El adaptador Groq del modo `ai` está implementado y probado con respuestas simuladas; falta ejecutar una generación real con clave.
 
-Ver [mejoras implementadas](docs/mejoras_20261010.md), [validación de desarrollo](docs/validacion_desarrollo.md) y [auditoría de código, funcionamiento y aspecto visual](docs/auditoria_20261010.md). Las pruebas con personas del [protocolo](docs/protocolo_pruebas.md) siguen pendientes. El catálogo no está verificado para uso alimentario real.
+Ver [mejoras implementadas](docs/mejoras_20261010.md), [corrección del calendario y cambio de hora](docs/correccion_calendario_20261010.md), [validación de desarrollo](docs/validacion_desarrollo.md) y [auditoría de código, funcionamiento y aspecto visual](docs/auditoria_20261010.md). Las pruebas con personas del [protocolo](docs/protocolo_pruebas.md) siguen pendientes. El catálogo no está verificado para uso alimentario real.
 
 ## Arrancar backend
 
@@ -56,7 +56,7 @@ Artefactos generados:
 
 - Android: `easyeats/build/app/outputs/flutter-apk/app-debug.apk`.
 - Web: `easyeats/build/web/`.
-- Windows: `easyeats/build/windows/x64/runner/Debug/`; conservar toda la carpeta junto al ejecutable.
+- Windows: `easyeats/build/windows/x64/runner/Release/`; conservar toda la carpeta junto al ejecutable. La corrección de calendario se entrega en Release; cerrar la versión anterior antes de abrir `Release/easyeats.exe`.
 
 ## Preparar historial ficticio
 
@@ -78,7 +78,7 @@ Los modos utilizan `backend/var/app_test.sqlite` y `app_ai.sqlite` separados. Si
 
 Desde `backend/`: `.venv/Scripts/python.exe -m pytest -q`. Desde `easyeats/`: `flutter analyze` y `flutter test`.
 
-45 pruebas de backend y 29 de Flutter pasan. El análisis de Flutter no muestra incidencias. Se han compilado web, APK Android y Windows. La compilación Android no sustituye una prueba en un teléfono por LAN.
+45 pruebas de backend y 35 de Flutter pasan. El análisis de Flutter no muestra incidencias. Se han compilado web, APK Android y Windows. La compilación Android no sustituye una prueba en un teléfono por LAN.
 
 Las migraciones numeradas se aplican al iniciar, con copia SQLite previa para actualizar una base existente. Sesiones, bases y copias locales están excluidas de Git. Detener el servidor antes de reconstruir el catálogo.
 

@@ -221,14 +221,15 @@ class ConfigurationFields extends StatelessWidget {
               onPressed: enabled
                   ? () async {
                       final now = DateTime.parse(today);
+                      final tomorrow = addCalendarDays(now, 1);
                       final date = await showDatePicker(
                         context: context,
                         initialDate: DateTime.parse(
                           fields['service_start_date'] as String? ??
-                              dateKey(now.add(const Duration(days: 1))),
+                              dateKey(tomorrow),
                         ),
-                        firstDate: now.add(const Duration(days: 1)),
-                        lastDate: DateTime(now.year, now.month + 2, 0),
+                        firstDate: tomorrow,
+                        lastDate: DateTime.utc(now.year, now.month + 2, 0),
                       );
                       if (date != null) {
                         set('service_start_date', dateKey(date));
