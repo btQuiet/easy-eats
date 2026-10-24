@@ -29,17 +29,18 @@ class _MenuScreenState extends State<MenuScreen> {
   bool generating = false;
   String? error;
 
-  static DateTime _monday(DateTime value) => DateTime(
-    value.year,
-    value.month,
-    value.day,
-  ).subtract(Duration(days: value.weekday - 1));
+  // Construir la fecha civil evita perder un día al cruzar el cambio horario.
+  static DateTime _dayAtOffset(DateTime value, int days) =>
+      DateTime(value.year, value.month, value.day + days);
+
+  static DateTime _monday(DateTime value) =>
+      _dayAtOffset(value, 1 - value.weekday);
 
   String dayString(DateTime value) =>
       '${value.year.toString().padLeft(4, '0')}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';
 
   String get monthString {
-    final focus = monday.add(const Duration(days: 3));
+    final focus = _dayAtOffset(monday, 3);
     return '${focus.year.toString().padLeft(4, '0')}-${focus.month.toString().padLeft(2, '0')}';
   }
 
@@ -315,7 +316,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     tooltip: 'Semana anterior',
                     onPressed: () {
                       setState(
-                        () => monday = monday.subtract(const Duration(days: 7)),
+                        () => monday = _dayAtOffset(monday, -7),
                       );
                       load();
                     },
@@ -324,7 +325,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   Expanded(
                     child: Center(
                       child: Text(
-                        '${dayString(monday)}  —  ${dayString(monday.add(const Duration(days: 6)))}',
+                        '${dayString(monday)}  —  ${dayString(_dayAtOffset(monday, 6))}',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
@@ -333,7 +334,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     tooltip: 'Semana siguiente',
                     onPressed: () {
                       setState(
-                        () => monday = monday.add(const Duration(days: 7)),
+                        () => monday = _dayAtOffset(monday, 7),
                       );
                       load();
                     },
@@ -385,11 +386,9 @@ class _MenuScreenState extends State<MenuScreen> {
                 ),
               if (!loading &&
                   !hasCycle &&
-                  monday
-                      .add(const Duration(days: 6))
-                      .isAfter(
-                        DateTime.now().subtract(const Duration(days: 1)),
-                      ))
+                  !_dayAtOffset(monday, 6).isBefore(
+                    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+                  ))
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   child: ElevatedButton.icon(
@@ -408,18 +407,18 @@ class _MenuScreenState extends State<MenuScreen> {
                 if (items.any(
                   (item) =>
                       item['day'] ==
-                      dayString(monday.add(Duration(days: index))),
+                      dayString(_dayAtOffset(monday, index)),
                 )) ...[
                   const SizedBox(height: 18),
                   Text(
-                    '${dayNames[index]} · ${dayString(monday.add(Duration(days: index)))}',
+                    '${dayNames[index]} · ${dayString(_dayAtOffset(monday, index))}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 6),
                   for (final item in items.where(
                     (item) =>
                         item['day'] ==
-                        dayString(monday.add(Duration(days: index))),
+                        dayString(_dayAtOffset(monday, index)),
                   ))
                     itemCard(item),
                 ],
