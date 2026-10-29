@@ -212,7 +212,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
                   onSelected: (_) => setState(() => plan = 'free'),
                 ),
                 ChoiceChip(
-                  label: const Text('Pro · menús + entrega simulada'),
+                  label: const Text('Pro · menús y entregas'),
                   selected: plan == 'pro',
                   onSelected: (_) => setState(() => plan = 'pro'),
                 ),
@@ -337,19 +337,13 @@ class _ProfileEditorState extends State<ProfileEditor> {
             if (plan == 'pro') ...[
               const SizedBox(height: 20),
               Text(
-                '5 · Entrega de prueba',
+                '5 · Entregas',
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 8),
               TextField(
                 controller: address,
-                decoration: const InputDecoration(
-                  labelText: 'Dirección ficticia',
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'El prototipo no organiza ni realiza entregas reales.',
+                decoration: const InputDecoration(labelText: 'Dirección'),
               ),
             ],
             const SizedBox(height: 20),
@@ -358,7 +352,7 @@ class _ProfileEditorState extends State<ProfileEditor> {
               child: Padding(
                 padding: EdgeInsets.all(14),
                 child: Text(
-                  'Catálogo demostrativo: la ausencia de un alérgeno registrado no garantiza que un plato real sea seguro.',
+                  'La ausencia de un alérgeno registrado no garantiza que un plato real sea seguro.',
                 ),
               ),
             ),

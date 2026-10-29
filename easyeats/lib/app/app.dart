@@ -170,15 +170,11 @@ class _ClientShellState extends State<ClientShell> {
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Chip(
-              label: Text(
-                widget.controller.capabilities?['label']?.toString() ??
-                    'Sin conexión',
-              ),
+          if (widget.controller.capabilities == null)
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              child: Chip(label: Text('Sin conexión')),
             ),
-          ),
           IconButton(
             tooltip: 'Cerrar sesión',
             onPressed: widget.controller.logout,

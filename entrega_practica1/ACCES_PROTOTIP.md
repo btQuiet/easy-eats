@@ -1,44 +1,67 @@
-# Accés al prototip Easy Eats
+# Easy Eats · Guia d’ús per a Windows
 
-Aquest paquet conté la web compilada, l'API FastAPI i el catàleg SQLite de demostració. Permet recórrer el registre d'un client, la configuració del perfil, la generació del menú mensual, l'aprovació inicial per part de l'operari, la consulta setmanal i el canvi de plats futurs.
+## Accés d’administrador
 
-## Requisits
+| Usuari | Contrasenya |
+| --- | --- |
+| `operario` | `demo1234` |
 
-- Windows amb Python 3.12 o posterior i connexió per instal·lar les dependències de `backend/requirements.txt`.
-- Dos terminals PowerShell. Per provar-lo des d'un altre dispositiu, els dos equips han de ser a la mateixa xarxa local.
+## 1. Obrir l’app
 
-## Inici al mateix ordinador
+Requisits: Windows 10 o 11 de 64 bits i connexió a Internet.
 
-Des de la carpeta extreta del ZIP, al primer terminal:
+Descomprimiu Easy_Eats_Windows.zip. Obriu la carpeta Easy_Eats i feu doble clic a easyeats.exe.
 
-```powershell
-cd backend
-py -3 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-$env:EASY_EATS_GENERATION_MODE = 'test'
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
+Conserveu els fitxers DLL i la carpeta data al costat de l’executable. Cal extreure tot el ZIP; no executeu el programa des de dins de l’arxiu comprimit.
 
-Al segon terminal, des de la carpeta extreta del ZIP:
+L’app utilitza el servei remot del projecte. No cal instal·lar Python, Flutter ni iniciar cap servidor al vostre ordinador.
 
-```powershell
-cd web
-..\backend\.venv\Scripts\python.exe -m http.server 8080 --bind 0.0.0.0
-```
+## 2. Crear un client
 
-Obriu `http://localhost:8080`. L'API respon a `http://localhost:8000/system/capabilities`. Per provar-lo des d'un altre equip, obriu `http://IP_DEL_SERVIDOR:8080` i, a **Servidor LAN** de la pantalla d'accés, poseu `http://IP_DEL_SERVIDOR:8000`. Si el tallafoc ho demana, permeteu els ports 8000 i 8080 a la xarxa privada. Canvieu `EASY_EATS_OPERATOR_PASSWORD` abans d'obrir el servidor en una LAN compartida.
+A la pantalla inicial, trieu Crear cuenta, escolliu un usuari i una contrasenya i conserveu-los per tornar a entrar.
 
-## Recorregut de la demostració
+Completeu el perfil: pla Free o Pro, dies i àpats, dieta, al·lèrgens declarats, ingredients exclosos i gustos. Cal marcar almenys un àpat setmanal. Pro afegeix la vista d’entregues i el camp de direcció.
 
-1. Trieu **Crear cuenta** i creeu un usuari de prova. Configureu el pla Free, dies i àpats diferents, i una dieta. Deseu el perfil.
-2. A **Semana**, genereu el menú del mes. La primera proposta queda pendent de revisió.
-3. Tanqueu la sessió i entreu com a `operario`. La contrasenya inicial és `demo1234`, tret que s'hagi definit `EASY_EATS_OPERATOR_PASSWORD` al servidor. Obriu la proposta i premeu **Aprobar primer menú**.
-4. Torneu al client. Consulteu la setmana i avanceu a una amb plats futurs per provar **Cambiar**. El catàleg permet veure el detall dels plats. Es pot registrar una opinió sobre plats del dia actual o anteriors.
+Premeu Guardar y continuar. Per avaluar-la, utilitzeu dades fictícies. Les fitxes dels plats no certifiquen l’absència real d’al·lèrgens.
 
-Les dades de comptes i menús es creen a `backend/var/app_test.sqlite` al primer inici. El catàleg alimentari és fictici i els seus al·lèrgens no estan verificats per a consum real. Utilitzeu credencials i adreces de prova.
+## 3. Generar i consultar el menú
 
-## Ús de la IA
+Obriu Semana. Les fletxes permeten consultar altres setmanes. Si el mes no té menú, premeu Generar menú de AAAA-MM.
 
-La configuració inclosa és **mode de proves**: el menú el genera un algorisme local determinista, sense IA. El codi incorpora un adaptador per a Groq, provat amb una resposta simulada. Per afirmar que la funció d'IA real funciona, cal configurar una clau al servidor, activar `EASY_EATS_GENERATION_MODE=ai` i verificar una generació mensual completa. No s'inclou cap clau en aquest paquet.
+La primera proposta del compte queda pendent de revisió de l’administrador. Després de l’aprovació, torneu al mateix client per veure els plats publicats.
 
-La fitxa inicial feta a mà no s'ha reescrit ni inclòs com a nou lliurable. Les dues proves amb persones externes i la millora basada en les observacions continuen pendents.
+Detalle mostra ingredients i al·lèrgens registrats. Catálogo permet explorar els plats. A Perfil podeu consultar i modificar les preferències.
+
+Cambiar permet escollir un altre plat d’una data futura. El canvi es desa directament, sense repetir l’aprovació. Opinar permet valorar plats d’avui o anteriors.
+
+## 4. Entrar com a administrador
+
+El rol d’administrador apareix a l’app com a Operario. Utilitza la mateixa pantalla d’accés que el client.
+
+Si teniu una sessió de client oberta, premeu Cerrar sesión. Introduïu operario i demo1234 i premeu Entrar.
+
+Al panell Easy Eats · Operario, obriu una proposta pendent i reviseu el perfil, les dates i els plats. Podeu utilitzar Sustituir o Regenerar mes abans d’aprovar.
+
+Premeu Aprobar primer menú. La proposta desapareixerà de pendents. Tanqueu la sessió i torneu al client per comprovar el menú publicat.
+
+Si la cua és buida, creeu primer un client i genereu-ne el primer menú. Els mesos següents d’un client ja revisat es publiquen sense repetir la revisió inicial.
+
+## 5. Recorregut d’avaluació
+
+Crear client i desar perfil → generar primer menú → entrar com a operari → revisar i aprovar → tornar al client → obrir Detalle i canviar un plat futur.
+
+Anoteu les credencials del client abans de canviar de rol. El compte operario serveix per revisar, no per crear un menú personal.
+
+## 6. Si apareix un problema
+
+L’app no s’obre: comproveu que heu extret tota la carpeta i que data i flutter_windows.dll són al costat de l’executable.
+
+Falta MSVCP140 o VCRUNTIME140: instal·leu Microsoft Visual C++ Redistributable x64 des de l’enllaç oficial indicat a continuació i torneu a obrir l’app.
+
+No connecta amb el servei: comproveu Internet. Si continua fallant, contacteu amb l’equip perquè comprovi el servei remot.
+
+No apareix Cambiar: aneu a una data futura amb un menú aprovat. Credencials incorrectes: comproveu el compte de client o utilitzeu el compte d’operari facilitat.
+
+Microsoft Visual C++ x64: https://aka.ms/vc14/vc_redist.x64.exe
+
+Informació oficial: https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist/

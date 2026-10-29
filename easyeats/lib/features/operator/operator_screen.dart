@@ -139,9 +139,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
             child: ListTile(
               leading: const CircleAvatar(child: Icon(Icons.person_outline)),
               title: Text(row['username'].toString()),
-              subtitle: Text(
-                '${row['month']} · ${row['plan']} · ${row['origin']}',
-              ),
+              subtitle: Text('${row['month']} · ${row['plan']}'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => openCycle(row['id'] as int),
             ),
@@ -176,9 +174,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
           style: Theme.of(context).textTheme.headlineMedium,
         ),
         const SizedBox(height: 6),
-        Text(
-          '${items.length} comidas · ${cycle['origin'] == 'ai' ? 'Generado con IA' : 'Modo de pruebas'}',
-        ),
+        Text('${items.length} ${items.length == 1 ? 'comida' : 'comidas'}'),
         const SizedBox(height: 14),
         Card(
           child: Padding(
@@ -223,7 +219,7 @@ class _OperatorScreenState extends State<OperatorScreen> {
         ),
         const SizedBox(height: 6),
         const Text(
-          'Puedes sustituir platos antes de aprobar. La app comprueba el perfil registrado, pero el catálogo es demostrativo.',
+          'Puedes sustituir platos antes de aprobar. Revisa el calendario y las restricciones del perfil.',
         ),
         const SizedBox(height: 20),
         for (final day
@@ -272,15 +268,11 @@ class _OperatorScreenState extends State<OperatorScreen> {
     appBar: AppBar(
       title: const Text('Easy Eats · Operario'),
       actions: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Chip(
-            label: Text(
-              widget.controller.capabilities?['label']?.toString() ??
-                  'Sin conexión',
-            ),
+        if (widget.controller.capabilities == null)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            child: Chip(label: Text('Sin conexión')),
           ),
-        ),
         IconButton(
           tooltip: 'Cerrar sesión',
           onPressed: widget.controller.logout,

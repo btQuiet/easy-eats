@@ -315,9 +315,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   IconButton(
                     tooltip: 'Semana anterior',
                     onPressed: () {
-                      setState(
-                        () => monday = _dayAtOffset(monday, -7),
-                      );
+                      setState(() => monday = _dayAtOffset(monday, -7));
                       load();
                     },
                     icon: const Icon(Icons.chevron_left),
@@ -333,9 +331,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   IconButton(
                     tooltip: 'Semana siguiente',
                     onPressed: () {
-                      setState(
-                        () => monday = _dayAtOffset(monday, 7),
-                      );
+                      setState(() => monday = _dayAtOffset(monday, 7));
                       load();
                     },
                     icon: const Icon(Icons.chevron_right),
@@ -343,17 +339,6 @@ class _MenuScreenState extends State<MenuScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-              Card(
-                color: EatsColors.sage,
-                child: Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Text(
-                    week?['origin'] == 'ai'
-                        ? 'Planificación generada con IA · platos del catálogo de prueba.'
-                        : 'Planificación de pruebas · generada sin IA.',
-                  ),
-                ),
-              ),
               if (loading)
                 const Padding(
                   padding: EdgeInsets.all(40),
@@ -387,7 +372,11 @@ class _MenuScreenState extends State<MenuScreen> {
               if (!loading &&
                   !hasCycle &&
                   !_dayAtOffset(monday, 6).isBefore(
-                    DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day),
+                    DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                    ),
                   ))
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 14),
@@ -399,15 +388,14 @@ class _MenuScreenState extends State<MenuScreen> {
                           ? 'Preparando el mes...'
                           : canGenerate
                           ? 'Generar menú de $monthString'
-                          : 'Modo IA sin clave configurada',
+                          : 'Generación no disponible',
                     ),
                   ),
                 ),
               for (var index = 0; index < 7; index++) ...[
                 if (items.any(
                   (item) =>
-                      item['day'] ==
-                      dayString(_dayAtOffset(monday, index)),
+                      item['day'] == dayString(_dayAtOffset(monday, index)),
                 )) ...[
                   const SizedBox(height: 18),
                   Text(
@@ -417,8 +405,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   const SizedBox(height: 6),
                   for (final item in items.where(
                     (item) =>
-                        item['day'] ==
-                        dayString(_dayAtOffset(monday, index)),
+                        item['day'] == dayString(_dayAtOffset(monday, index)),
                   ))
                     itemCard(item),
                 ],

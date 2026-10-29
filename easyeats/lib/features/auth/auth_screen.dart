@@ -113,9 +113,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          register
-                              ? 'Crea una cuenta de prueba'
-                              : 'Entra en tu cuenta de prueba',
+                          register ? 'Crea tu cuenta' : 'Entra en tu cuenta',
                         ),
                         const SizedBox(height: 26),
                         SegmentedButton<bool>(
@@ -202,15 +200,6 @@ class _AuthScreenState extends State<AuthScreen> {
                                   ),
                                 )
                               : Text(register ? 'Crear cuenta' : 'Entrar'),
-                        ),
-                        const SizedBox(height: 24),
-                        const Card(
-                          child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Text(
-                              'Operario de demostración: usuario operario. La contraseña se configura en el servidor. Los menús y entregas son de prueba.',
-                            ),
-                          ),
                         ),
                       ],
                     ),

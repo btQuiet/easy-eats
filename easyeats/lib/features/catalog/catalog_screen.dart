@@ -31,61 +31,59 @@ String recipeWarnings(Recipe recipe, Map<String, dynamic>? profile) {
   return warnings.join(' · ');
 }
 
-Future<void> showRecipeDetails(
-  BuildContext context,
-  Recipe recipe,
-) => showDialog<void>(
-  context: context,
-  builder: (context) => AlertDialog(
-    title: Text(recipe['name'].toString()),
-    content: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 470),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${recipe['category']} · ${recipe['cuisine']}'),
-            const SizedBox(height: 14),
-            const Text(
-              'Ingredientes',
-              style: TextStyle(fontWeight: FontWeight.bold),
+Future<void> showRecipeDetails(BuildContext context, Recipe recipe) =>
+    showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(recipe['name'].toString()),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 470),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('${recipe['category']} · ${recipe['cuisine']}'),
+                const SizedBox(height: 14),
+                const Text(
+                  'Ingredientes',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  (recipe['ingredients'] as List)
+                      .map((item) => item['name'])
+                      .join(', '),
+                ),
+                const SizedBox(height: 14),
+                const Text(
+                  'Alérgenos modelados',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  (recipe['allergens'] as List).isEmpty
+                      ? 'No se han registrado en este concepto de plato.'
+                      : (recipe['allergens'] as List)
+                            .map((item) => item['name'])
+                            .join(', '),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Ingredientes, trazas y elaboración reales no verificados.',
+                ),
+              ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              (recipe['ingredients'] as List)
-                  .map((item) => item['name'])
-                  .join(', '),
-            ),
-            const SizedBox(height: 14),
-            const Text(
-              'Alérgenos modelados',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              (recipe['allergens'] as List).isEmpty
-                  ? 'No se han registrado en este concepto de plato.'
-                  : (recipe['allergens'] as List)
-                        .map((item) => item['name'])
-                        .join(', '),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Ficha demostrativa: ingredientes, trazas y elaboración reales no verificados.',
-            ),
-          ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cerrar'),
+          ),
+        ],
       ),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('Cerrar'),
-      ),
-    ],
-  ),
-);
+    );
 
 Future<Recipe?> pickRecipe(
   BuildContext context,
@@ -297,9 +295,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 4),
-              const Text(
-                '125 ideas de plato. Sus ingredientes y alérgenos son datos de demostración.',
-              ),
+              const Text('125 ideas de plato para organizar tu semana.'),
               const SizedBox(height: 16),
               TextField(
                 decoration: const InputDecoration(

@@ -77,7 +77,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                       Text(
                         delivery!['status'] == 'sin_menu'
                             ? 'Aún no hay menú para esta semana'
-                            : 'Entrega de prueba planificada',
+                            : 'Planificación semanal',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
                       const SizedBox(height: 10),
@@ -85,15 +85,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                       Text('${delivery!['items_count']} platos'),
                       Text('Dirección: ${delivery!['address']}'),
                     ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 14),
-              const Card(
-                child: Padding(
-                  padding: EdgeInsets.all(18),
-                  child: Text(
-                    'Esta es una simulación académica. No se realiza ningún pedido, pago ni reparto real.',
                   ),
                 ),
               ),

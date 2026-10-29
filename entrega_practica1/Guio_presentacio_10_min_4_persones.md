@@ -1,12 +1,13 @@
 # Guió oral d'Easy Eats — 10 minuts, 4 persones
 
-**Llengua:** català. **Suport:** les dues diapositives de `Soporte_demo_Easy_Eats.pptx` i la web del prototip. **Durada prevista:** 9:30–10:00, incloent-hi els clics i les pauses de la demostració. Substituïu «Persona 1–4» pels noms del grup.
+**Llengua:** català. **Suport:** les dues diapositives de `Soporte_demo_Easy_Eats.pptx` i l'aplicació de Windows. **Durada prevista:** 9:30–10:00, incloent-hi els clics i les pauses de la demostració. Substituïu «Persona 1–4» pels noms del grup.
 
 ## Abans de començar
 
-- Obrir la presentació a la diapositiva 1 i tenir la web i l'API en marxa en mode de proves.
+- Obrir la presentació a la diapositiva 1 i l'executable `easyeats.exe`. Comprovar abans de la defensa la connexió a Internet i la disponibilitat del servei del projecte al VPS. No cal iniciar cap servidor a l'ordinador de la demostració.
 - Preparar un client de demostració amb el perfil desat i la primera proposta pendent. Tenir a mà l'accés de l'operari. Si voleu ensenyar un canvi de plat sense esperar, preparar també un client amb un menú ja aprovat.
 - Comprovar que el mes de prova inclou plats en una data futura, perquè el botó «Cambiar» només apareix per a plats futurs.
+- Tenir a mà el compte d'administrador: `operario` / `demo1234`. Verificar aquestes credencials al servei de la defensa i anotar també les del client preparat.
 - Assajar els canvis de compte. Els textos entre claudàtors són accions i no s'han de llegir en veu alta.
 
 ## Diapositiva 1 — problema i recorregut
@@ -19,13 +20,13 @@ En la fitxa inicial, feta en paper, vam partir precisament d'aquesta relació en
 
 Easy Eats demana al client les decisions que realment afecten el menú: quins dies el necessita, quins àpats vol en cada dia i quines restriccions o preferències té. A partir d'això crea una proposta mensual i la presenta per setmanes. Això és important perquè el resultat no és només una llista de receptes: cada plat correspon a una data i a un àpat que la persona havia triat.
 
-Per mantenir l'abast realista, el prototip no calcula calories ni fa recomanacions mèdiques. El nostre catàleg és de demostració i no té dades nutricionals verificades. Per això hem centrat la prova en un recorregut que sí que podem mostrar: configurar el perfil, generar el menú, revisar la primera proposta i deixar que el client consulti i canviï plats futurs. Ara veurem aquest recorregut a la web.»
+Per mantenir l'abast realista, el prototip no calcula calories ni fa recomanacions mèdiques. El nostre catàleg no té dades nutricionals verificades. Per això hem centrat la prova en un recorregut que sí que podem mostrar: configurar el perfil, generar el menú, revisar la primera proposta i deixar que el client consulti i canviï plats futurs. Ara veurem aquest recorregut a l'aplicació de Windows, connectada al servei remot del projecte.»
 
 **Traspàs:** «[Nom de la persona 2], ens ensenyes què decideix el client?»
 
 ### Persona 2 · 2:15–4:40 · Configuració i generació
 
-[Mostrar la web amb el client de demostració. Obrir el perfil; assenyalar el calendari, la dieta i el pla.]
+[Mostrar l'app de Windows amb el client preparat. Obrir el perfil; assenyalar el calendari, la dieta i el pla.]
 
 «Sí. Comencem amb un usuari de prova. Aquí el client pot triar el pla Free, que dona accés als menús. El pla Pro afegeix una vista d'entrega a domicili, però en aquest prototip l'entrega és simulada: no hi ha pagament ni repartiment real.
 
@@ -41,9 +42,9 @@ Ara demanem el menú del mes. El servidor crea un espai per a cada data i àpat 
 
 ### Persona 3 · 4:40–7:15 · Revisió i ús del menú
 
-[Entrar com a operari, obrir la proposta pendent i mostrar-ne les opcions. Aprovar-la. Tornar al client, o utilitzar el client aprovat que s'ha preparat abans.]
+[Prémer Cerrar sesión i entrar com a operari amb operario / demo1234. Obrir la proposta pendent i mostrar-ne les opcions. Aprovar-la. Tornar al client, o utilitzar el client aprovat que s'ha preparat abans.]
 
-«La fa l'operari. Té una pantalla amb les primeres propostes pendents. Pot mirar la planificació mensual i les restriccions declarades pel client. Si detecta un plat inadequat per al cas de prova, pot substituir-lo; també pot demanar una altra proposta. Quan la revisió és correcta, aprova aquest primer menú. La revisió s'aplica a la primera proposta de cada client, i no a cada petit canvi que faci més endavant.
+«La fa l'operari, que és el rol d'administrador. Hi entrem des de la mateixa pantalla d'accés, amb l'usuari operario i la contrasenya facilitada a la guia. Té una pantalla amb les primeres propostes pendents. Pot mirar la planificació mensual i les restriccions declarades pel client. Si detecta un plat inadequat per al cas de prova, pot substituir-lo; també pot demanar una altra proposta. Quan la revisió és correcta, aprova aquest primer menú. La revisió s'aplica a la primera proposta de cada client, i no a cada petit canvi que faci més endavant.
 
 Tornem ara a la vista del client. El menú es consulta per setmanes. A cada targeta hi ha el dia, l'àpat i el plat assignat. Si obrim el detall, podem veure els ingredients i els al·lèrgens que el catàleg té registrats. Vull remarcar que aquestes fitxes són dades fictícies de prova: no certifiquen que un aliment real sigui segur per a una persona amb al·lèrgies.
 
@@ -67,7 +68,7 @@ Aquest recorregut ens ha ajudat a concretar el producte. La persona controla el 
 
 La demostració que heu vist utilitza un generador local determinista, en mode de proves, **sense IA**. Hem implementat l'adaptador de Groq i l'hem provat amb una resposta simulada, però encara no hem verificat una generació mensual amb una crida real. Avui podem defensar el recorregut digital i les comprovacions del servidor; no podem afirmar que la generació amb IA real estigui validada. El següent pas és repetir el recorregut amb el mode d'IA activat.
 
-Hem utilitzat Codex per programar, revisar el codi i preparar la documentació de la demo. Les decisions de producte i la responsabilitat sobre el resultat són del grup. La interfície indica quan una proposta surt del mode de proves.
+Hem utilitzat Codex per programar, revisar el codi i preparar la documentació. Les decisions de producte i la responsabilitat sobre el resultat són del grup. L'executable es lliura amb una guia d'ús. El professor ha de descomprimir tota la carpeta i obrir l'app; no necessita Python, Flutter ni arrencar un servidor local.
 
 També tenim pendent fer dues proves amb persones externes i incorporar almenys una millora basada en les seves observacions. Volem veure si entenen, sense ajuda, la diferència entre configurar el perfil, esperar l'aprovació i canviar un plat futur.
 
@@ -77,7 +78,7 @@ En resum, Easy Eats transforma les decisions del client en un menú mensual cons
 
 | Tram | Durada | Senyal per avançar |
 | --- | ---: | --- |
-| Persona 1 | 2:15 | Cedir la web al client |
+| Persona 1 | 2:15 | Mostrar l'app amb el compte del client |
 | Persona 2 | 2:25 | Mostrar «pendent de revisió» |
 | Persona 3 | 2:35 | Acabar amb el canvi de plat futur |
 | Persona 4 | 2:45 | Tancar a 10:00 |
